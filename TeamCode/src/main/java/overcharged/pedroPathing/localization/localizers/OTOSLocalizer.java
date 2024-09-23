@@ -40,7 +40,8 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 public class OTOSLocalizer extends Localizer {
     private HardwareMap hardwareMap;
     private Pose startPose;
-    private SparkFunOTOS otos;
+    com.qualcomm.hardware.sparkfun.SparkFunOTOS otos;
+    //private SparkFunOTOS otos;
     private double previousHeading;
     private double totalHeading;
 
