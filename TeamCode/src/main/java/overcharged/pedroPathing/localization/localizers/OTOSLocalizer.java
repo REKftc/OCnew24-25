@@ -40,8 +40,8 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 public class OTOSLocalizer extends Localizer {
     private HardwareMap hardwareMap;
     private Pose startPose;
-    com.qualcomm.hardware.sparkfun.SparkFunOTOS otos;
-    //private SparkFunOTOS otos;
+    //com.qualcomm.hardware.sparkfun.SparkFunOTOS otos;
+    private SparkFunOTOS otos;
     private double previousHeading;
     private double totalHeading;
 
@@ -71,7 +71,7 @@ public class OTOSLocalizer extends Localizer {
           'SparkFunOTOS.class' below with 'SparkFunOTOSCorrected.class' and set the OTOS as a
           "SparkFunOTOS Corrected" in your robot confg
          */
-         SparkFunOTOS
+
         otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
         otos.setLinearUnit(DistanceUnit.INCH);
