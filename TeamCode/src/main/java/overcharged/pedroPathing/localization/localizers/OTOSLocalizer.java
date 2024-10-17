@@ -40,8 +40,10 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 public class OTOSLocalizer extends Localizer {
     private HardwareMap hardwareMap;
     private Pose startPose;
-    //com.qualcomm.hardware.sparkfun.SparkFunOTOS otos;
     private SparkFunOTOS otos;
+    private SparkFunOTOS.Pose2D otosPose;
+    private SparkFunOTOS.Pose2D otosVel;
+    private SparkFunOTOS.Pose2D otosAcc;
     private double previousHeading;
     private double totalHeading;
 
@@ -65,13 +67,12 @@ public class OTOSLocalizer extends Localizer {
     public OTOSLocalizer(HardwareMap map, Pose setStartPose) {
         hardwareMap = map;
 
-        // TODO: replace this with your OTOS port
         /*
          TODO: If you want to use the "SparkFunOTOSCorrected" version of OTOS, then replace the
           'SparkFunOTOS.class' below with 'SparkFunOTOSCorrected.class' and set the OTOS as a
-          "SparkFunOTOS Corrected" in your robot confg
+          "SparkFunOTOS Corrected" in your robot config
          */
-
+        // TODO: replace this with your OTOS port
         otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
         otos.setLinearUnit(DistanceUnit.INCH);
@@ -91,6 +92,9 @@ public class OTOSLocalizer extends Localizer {
         otos.resetTracking();
 
         setStartPose(setStartPose);
+        otosPose = new SparkFunOTOS.Pose2D();
+        otosVel = new SparkFunOTOS.Pose2D();
+        otosAcc = new SparkFunOTOS.Pose2D();
         totalHeading = 0;
         previousHeading = startPose.getHeading();
 
@@ -104,8 +108,7 @@ public class OTOSLocalizer extends Localizer {
      */
     @Override
     public Pose getPose() {
-        SparkFunOTOS.Pose2D pose = otos.getPosition();
-        return MathFunctions.addPoses(startPose, new Pose(pose.x, pose.y, pose.h));
+        return MathFunctions.addPoses(startPose, new Pose(otosPose.x, otosPose.y, otosPose.h));
     }
 
     /**
@@ -115,8 +118,7 @@ public class OTOSLocalizer extends Localizer {
      */
     @Override
     public Pose getVelocity() {
-        SparkFunOTOS.Pose2D OTOSVelocity = otos.getVelocity();
-        return new Pose(OTOSVelocity.x, OTOSVelocity.y, OTOSVelocity.h);
+        return new Pose(otosVel.x, otosVel.y, otosVel.h);
     }
 
     /**
@@ -158,8 +160,9 @@ public class OTOSLocalizer extends Localizer {
      */
     @Override
     public void update() {
-        totalHeading += MathFunctions.getSmallestAngleDifference(otos.getPosition().h, previousHeading);
-        previousHeading = otos.getPosition().h;
+        otos.getPosVelAcc(otosPose,otosVel,otosAcc);
+        totalHeading += MathFunctions.getSmallestAngleDifference(otosPose.h, previousHeading);
+        previousHeading = otosPose.h;
     }
 
     /**
