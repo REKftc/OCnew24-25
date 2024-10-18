@@ -29,6 +29,11 @@ public class RobotMecanum {
 
     public MecanumDrive drive;
 
+    public Intake intake;
+    public hslides hslides;
+    public intakeTilt intakeTilt;
+
+
     public final List<OcLed> leds = new ArrayList<>();
 
     public final List<OcServo> servos = new ArrayList<>();
@@ -104,7 +109,27 @@ public class RobotMecanum {
 
             this.drive = createDrive();
         }
-
+        try {
+            hslides = new hslides(hardwareMap);
+        } catch (Exception e) {
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: hslides " + e.getMessage());
+            missing = missing + ", hSlides";
+            numberMissing++;
+        }
+        try {
+            intake = new Intake(hardwareMap);
+        } catch (Exception e){
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: intake " + e.getMessage());
+            missing = missing + ", intake";
+            numberMissing++;
+        }
+        try {
+            intakeTilt = new intakeTilt(hardwareMap);
+        } catch (Exception e){
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: IntakeBigTilt " + e.getMessage());
+            missing = missing + ", IntakeBigTilt";
+            numberMissing++;
+        }
 
     }
 
