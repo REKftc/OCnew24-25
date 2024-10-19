@@ -3,17 +3,17 @@
     <LynxUsbDevice name="Control Hub Portal" serialNumber="(embedded)" parentModuleAddress="173">
         <LynxModule name="Expansion Hub 2" port="2">
 
-            <goBILDA5202SeriesMotor name="hslides" port="5" />
+            <goBILDA5202SeriesMotor name="hslides" port="3" />
+            <goBILDA5203SeriesMotor name="driveRB" port="2" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
             <goBILDA5203SeriesMotor name="driveRF" port="0" />
-            <goBILDA5203SeriesMotor name="driveRB" port="1" />
             <goBILDA5203SeriesMotor name="driveLF" port="2" />
             <goBILDA5203SeriesMotor name="driveLB" port="3" />
-            <goBILDA5202SeriesMotor name="intake" port="5" />
+            <goBILDA5202SeriesMotor name="intake" port="1" />
 
             <SparkFunOTOS name="sensor_otos" port="0" bus="0"/>
-            <Servo name="intakeTilt" port="5" />
+            <Servo name="intakeTilt" port="0" />
 
         </LynxModule>
     </LynxUsbDevice>

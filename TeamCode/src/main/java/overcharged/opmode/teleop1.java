@@ -23,10 +23,10 @@ public class teleop1 extends OpMode {
     long startTime;
     private Follower follower;
 
-    private DcMotorEx leftFront;
-    private DcMotorEx leftRear;
-    private DcMotorEx rightFront;
-    private DcMotorEx rightRear;
+    private DcMotorEx driveLF;
+    private DcMotorEx driveLB;
+    private DcMotorEx driveRF;
+    private DcMotorEx driveRB;
 
     private Vector driveVector;
     private Vector headingVector;
@@ -48,15 +48,15 @@ public class teleop1 extends OpMode {
 
         follower = new Follower(hardwareMap);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "driveLF");
-        leftRear = hardwareMap.get(DcMotorEx.class, "driveLB");
-        rightRear = hardwareMap.get(DcMotorEx.class, "driveRB");
-        rightFront = hardwareMap.get(DcMotorEx.class, "driveRF");
+        driveLF = hardwareMap.get(DcMotorEx.class, "driveLF");
+        driveLB = hardwareMap.get(DcMotorEx.class, "driveLB");
+        driveRB = hardwareMap.get(DcMotorEx.class, "driveRB");
+        driveRF = hardwareMap.get(DcMotorEx.class, "driveRF");
 
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveLF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveLB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveRB.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        driveRF.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         follower.startTeleopDrive();
 

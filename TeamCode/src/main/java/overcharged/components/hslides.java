@@ -33,7 +33,7 @@ public class hslides {
     public static double f = 0;
 
     public hslides(HardwareMap hardwareMap) {
-        hslides = new OcMotorEx(hardwareMap, "hslidesR", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
+        hslides = new OcMotorEx(hardwareMap, "hslides", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
        // hslidesL = new OcMotorEx(hardwareMap, "hslidesL", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
         //hslidesR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //hslidesL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);

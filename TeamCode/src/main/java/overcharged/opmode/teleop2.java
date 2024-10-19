@@ -18,6 +18,11 @@ import overcharged.components.RobotMecanum;
 import overcharged.pedroPathing.follower.Follower;
 import overcharged.pedroPathing.pathGeneration.Vector;
 
+// BUTTON MAP
+// Driver A
+//
+//
+
 @Config
 @TeleOp(name="teleop2", group="Teleop")
 public class teleop2 extends OpMode {
@@ -62,38 +67,48 @@ public class teleop2 extends OpMode {
             firstLoop = false;
             robot.hslides.in();
         }
+        // Clear bulk cache
         robot.clearBulkCache();
         long timestamp = System.currentTimeMillis();
 
+        // Joystick and bumper handling
         double y = gamepad1.left_stick_y;
         double x = -gamepad1.left_stick_x * 1.1;
         double rx = -gamepad1.right_stick_x;
-
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
-        double frontLeftPower = ((y + x + rx) / denominator) * slowPower;
-        double backLeftPower = ((y - x + rx) / denominator) * slowPower;
-        double frontRightPower = ((y - x - rx) / denominator) * slowPower;
-        double backRightPower = ((y + x - rx) / denominator) * slowPower;
 
-        robot.driveLeftFront.setPower(frontLeftPower);
-        robot.driveLeftBack.setPower(backLeftPower);
-        robot.driveRightFront.setPower(frontRightPower);
-        robot.driveRightBack.setPower(backRightPower);
+        // Check if left bumper is pressed to enable hslide control
+        if (hSlideisOut) {
+            // Use the left joystick Y-axis to control hslide movement
+            float slidePower = -gamepad1.left_stick_y;  // Invert to match expected joystick behavior
 
-        // Bring hSlides out
-        if (gamepad2.a && Button.BTN_HORIZONTAL.canPress(timestamp)) {
-            if (!hSlideisOut) {
+            // Control the hslide movement with the joystick
+            if (Math.abs(slidePower) > 0.1) { // Add deadzone check
                 robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                robot.hslides.moveEncoderTo(300, 0.6f);
+                robot.hslides.hslides.setPower(slidePower);
                 hSlideisOut = true;
-            } else if (hSlideisOut) {
-                hSlideGoBottom = true;
+            } else {
+                // Stop the hslides if joystick is not being pushed
+                robot.hslides.hslides.setPower(0);
             }
+        } else {
+            // Regular robot movement control when left bumper is not pressed
+            double frontLeftPower = ((y + x + rx) / denominator) * slowPower;
+            double backLeftPower = ((y - x + rx) / denominator) * slowPower;
+            double frontRightPower = ((y - x - rx) / denominator) * slowPower;
+            double backRightPower = ((y + x - rx) / denominator) * slowPower;
 
+            robot.driveLeftFront.setPower(frontLeftPower);
+            robot.driveLeftBack.setPower(backLeftPower);
+            robot.driveRightFront.setPower(frontRightPower);
+            robot.driveRightBack.setPower(backRightPower);
+        }
+        if (gamepad1.left_bumper && Button.TRANSFER.canPress(timestamp)){
+            hSlideisOut = !hSlideisOut;
         }
 
-        // Bring hSlides in
-        if (!robot.hslides.slideIn() && hSlideGoBottom) {// && robot.vSlides.getCurrentPosition() > robot.vSlides.start){//!robot.vSlides.slideReachedBottom()){
+            // Logic for bringing hslides back in
+        if (!robot.hslides.slideIn() && hSlideGoBottom) {
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.hslides.hslides.setPower(-1);
             RobotLog.ii(TAG_SL, "Going down");
