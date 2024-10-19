@@ -20,8 +20,8 @@ import overcharged.pedroPathing.pathGeneration.Point;
 import overcharged.pedroPathing.util.Timer;
 
 // Main Class
-@Autonomous(name = "blue blue 1+3", group = "Autonomous")
-public class autoBlueBlueSafe3 extends OpMode{
+@Autonomous(name = "red red 1+3", group = "Autonomous")
+public class autoRedRedSafe3 extends OpMode{
 
     // Init
     private RobotMecanum robot;
@@ -71,7 +71,7 @@ public class autoBlueBlueSafe3 extends OpMode{
 
     // OTHER POSES
     private Pose moveOutPoint, beforeFirst, aBitForward, goToBBLlineUp, goToBBL, startToObs, goToBBMlineUp, goToBBM, goToBBRlineUp, goToBBR;
-    private Pose startPose = new Pose(9.5+48, 144-7, 0);
+    private Pose startPose = new Pose(3*24+17, 6.5, 0);
 
     private Path initialObs, firstMoveToPos, findSpotOne, firstCycleToObs, firstCycleBack, secondCycleToObs, secondCycleBack, finalCycleToObs;
 
@@ -79,26 +79,26 @@ public class autoBlueBlueSafe3 extends OpMode{
 
     //TODO: Starting from here are the poses for the paths
     public void firstSpecimen(){
-        startToObs = new Pose(24, 144-7, 0);
+        startToObs = new Pose(blueBlueLeftSample.getX()+2, 144-7, 0);
     }
     public void startingGoalPose(){
-        moveOutPoint = new Pose(22, 120, 0);
-        beforeFirst = new Pose(40, 72+6, 0);
+        moveOutPoint = new Pose(blueBlueLeftSample.getX(), blueBlueLeftSample.getY()+20, 0);
+        beforeFirst = new Pose(blueBlueLeftSample.getX()+20, blueBlueLeftSample.getY()-16, 0);
     }
     public void startingGoalPoseExt(){
         aBitForward = new Pose(29, 88, 0);
     }
     public void firstCycle(){
-        goToBBLlineUp = new Pose(32, 100, 0);
-        goToBBL = new Pose(32, 124, 0);
+        goToBBLlineUp = new Pose(blueBlueLeftSample.getX()+10, blueBlueLeftSample.getY()+4, 0);
+        goToBBL = new Pose(blueBlueLeftSample.getX()+10, blueBlueLeftSample.getY()+20, 0);
     }
     public void secondCycle(){
-        goToBBMlineUp = new Pose(5, 84, 0);
-        goToBBM = new Pose(20, 128, 0);
+        goToBBMlineUp = new Pose(blueBlueMidSample.getX()-7, blueBlueMidSample.getY()+4,0);
+        goToBBM = new Pose(blueBlueMidSample.getX()+8, blueBlueMidSample.getY()+20, 0);
     }
     public void thirdCycle(){
-        goToBBRlineUp = new Pose(-2, 70, 0);
-        goToBBR = new Pose(10, 124, 0);
+        goToBBRlineUp = new Pose(-blueBlueRightSample.getX()-4, blueBlueRightSample.getY()+4, 0);
+        goToBBR = new Pose(blueBlueRightSample.getX()+8, blueBlueRightSample.getY()+20, 0);
     }
 
     //TODO: here are where the paths are defined
@@ -212,7 +212,7 @@ public class autoBlueBlueSafe3 extends OpMode{
 
         // Robot things init
         telems = new MultipleTelemetry(dashboard.getTelemetry(), telemetry);
-        robot = new RobotMecanum(this, true, false);
+        robot = new RobotMecanum(this, true, true);
         drive = new SampleMecanumDrive(hardwareMap);
         pathTimer = new Timer();
 
@@ -245,3 +245,4 @@ public class autoBlueBlueSafe3 extends OpMode{
         autoPath();
     }
 }
+

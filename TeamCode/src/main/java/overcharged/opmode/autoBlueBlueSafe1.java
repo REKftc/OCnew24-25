@@ -3,6 +3,7 @@ package overcharged.opmode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import overcharged.components.RobotMecanum;
@@ -16,6 +17,7 @@ import overcharged.pedroPathing.pathGeneration.Point;
 import overcharged.pedroPathing.util.Timer;
 
 // Main Class
+@Disabled
 @Autonomous(name = "blue blue 1+1", group = "Autonomous")
 public class autoBlueBlueSafe1 extends OpMode{
 

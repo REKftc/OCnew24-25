@@ -18,7 +18,7 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 @TeleOp(name="teleop", group="Teleop")
 public class teleop extends OpMode {
     RobotMecanum robot;
-    double slowPower = 1;
+    double slowPower = 0.9f;
     long startTime;
     boolean hSlideGoBottom = false;
     boolean intakeOn = false;
@@ -26,11 +26,17 @@ public class teleop extends OpMode {
     boolean intakeTransfer = false;
     private DigitalChannel hlimitswitch;
     boolean firstLoop = true;
+    SlideLength slideLength = SlideLength.IN;
     IntakeMode intakeMode = IntakeMode.OFF;
     public enum IntakeMode {
         IN,
         OUT,
         OFF;
+    }
+    public enum SlideLength {
+        IN,
+        MID,
+        LONG;
     }
     @Override
     public void init() {
@@ -68,16 +74,36 @@ public class teleop extends OpMode {
         robot.driveLeftBack.setPower(backLeftPower);
         robot.driveRightFront.setPower(frontRightPower);
         robot.driveRightBack.setPower(backRightPower);
+
+        if(slideLength==SlideLength.LONG||slideLength==SlideLength.MID){
+            slowPower = 0.9f;
+        }
         // Bring hSlides out
-        if (gamepad2.a && Button.BTN_HORIZONTAL.canPress(timestamp)) {
-            if (!hSlideisOut) {
+        if (gamepad1.right_bumper && Button.BTN_HORIZONTAL.canPress(timestamp)) {
+            if (slideLength==SlideLength.IN||slideLength == SlideLength.LONG) {
                 hSlideisOut = true;
+                slideLength = SlideLength.MID;
                 robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 robot.hslides.moveEncoderTo(300, 0.6f);
-            } else if (hSlideisOut) {
-                hSlideGoBottom = true;
             }
+            else if (slideLength==SlideLength.MID){
+                hSlideisOut = true;
+                slideLength = SlideLength.LONG;
+                robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                robot.hslides.moveEncoderTo(500, 0.6f);
+            }
+
         }
+
+        if (gamepad1.left_bumper && Button.BTN_HORIZONTAL.canPress(timestamp)) {
+                hSlideGoBottom = true;
+                slideLength = SlideLength.IN;
+                robot.intakeTilt.setTransfer();
+                intakeTransfer = true;
+
+        }
+
+
         // Bring hSlides in
         if (!hlimitswitch.getState() && (hSlideGoBottom)) {// && robot.vSlides.getCurrentPosition() > robot.vSlides.start){//!robot.vSlides.slideReachedBottom()){
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -88,6 +114,7 @@ public class teleop extends OpMode {
             robot.hslides.hslides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hSlideGoBottom = false;
             hSlideisOut = false;
+            slideLength=SlideLength.IN;
             RobotLog.ii(TAG_SL, "Force stopped");
         }
         // Change intake tilt
@@ -101,7 +128,7 @@ public class teleop extends OpMode {
             }
         }
         // Intake On and Off (in)
-        if (gamepad1.right_trigger > 0.9 && Button.INTAKE.canPress(timestamp)) {//gamepad1.right_bumper && Button.INTAKE.canPress(timestamp)){
+        if (gamepad2.right_trigger > 0.9 && Button.INTAKE.canPress(timestamp)) {//gamepad1.right_bumper && Button.INTAKE.canPress(timestamp)){
             if (intakeMode == IntakeMode.OFF) {
                 robot.intake.in();
                 intakeMode = IntakeMode.IN;
@@ -110,7 +137,7 @@ public class teleop extends OpMode {
                 intakeMode = IntakeMode.OFF;
             }
         }
-        if(gamepad1.left_trigger > 0.9 && Button.INTAKEOUT.canPress(timestamp)){//bumper && Button.INTAKEOUT.canPress(timestamp)){
+        if(gamepad2.left_trigger > 0.9 && Button.INTAKEOUT.canPress(timestamp)){//bumper && Button.INTAKEOUT.canPress(timestamp)){
             if(intakeMode == IntakeMode.OFF) {
                 robot.intake.out();
                 intakeMode = IntakeMode.OUT;
@@ -121,6 +148,19 @@ public class teleop extends OpMode {
             }
 
 
+        }
+        //joy stick controls
+
+        if(gamepad2.left_stick_y > 0.1 && !hlimitswitch.getState()) {
+            robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            //robot.hslides.moveEncoderTo(robot.hslides.hslides.getCurrentPosition()-(int)gamepad2.left_stick_y / 2, 0.3f);
+            robot.hslides.hslides.setPower(-gamepad2.left_stick_y / 2);
+        }
+        if(gamepad2.left_stick_y < -0.1 && robot.hslides.hslides.getCurrentPosition() < 500){
+            robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            //robot.hslides.moveEncoderTo(robot.hslides.hslides.getCurrentPosition()-(int)gamepad2.left_stick_y / 2, 0.3f);
+            robot.hslides.hslides.setPower(-gamepad2.left_stick_y/2);
         }
         telemetry.addData("h limit switch: ",   hlimitswitch.getState());
         telemetry.addData("test:", robot.hslides.hslides.getPower());
