@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import overcharged.components.Button;
@@ -36,7 +37,7 @@ public class teleop2 extends OpMode {
     boolean hSlideisOut = false;
     boolean intakeTransfer = false;
     boolean firstLoop = true;
-
+    private DigitalChannel hlimitswitch;
     IntakeMode intakeMode = IntakeMode.OFF;
 
     public enum IntakeMode {
@@ -52,6 +53,7 @@ public class teleop2 extends OpMode {
             telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
             robot = new RobotMecanum(this, false, false);
             startTime = System.currentTimeMillis();
+            hlimitswitch = hardwareMap.get(DigitalChannel.class, "hlimitswitch");
             robot.setBulkReadManual();
             //robot.vSlides.vSlidesB.setTargetPositionPIDFCoefficients(21,0,0,0);
         } catch (Exception e) {
@@ -119,11 +121,11 @@ public class teleop2 extends OpMode {
         }
 
             // Logic for bringing hslides back in
-        if (!robot.hslides.slideIn() && hSlideGoBottom) {
+        if (!hlimitswitch.getState() && hSlideGoBottom) {
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.hslides.hslides.setPower(-1);
             RobotLog.ii(TAG_SL, "Going down");
-        } else if (robot.hslides.slideIn() && hSlideGoBottom) {
+        } else if (hlimitswitch.getState() && hSlideGoBottom) {
             robot.hslides.forceStop();
             robot.hslides.hslides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hSlideGoBottom = false;
@@ -162,7 +164,7 @@ public class teleop2 extends OpMode {
                 intakeMode = IntakeMode.OFF;
             }
         }
-        telemetry.addData("h limit switch: ", robot.hslides.switchSlideDown.isTouch());
+        telemetry.addData("h limit switch: ", hlimitswitch.getState());
         telemetry.addData("driveLF", robot.driveLeftFront.getCurrentPosition());
         telemetry.addData("driveLB", robot.driveLeftBack.getCurrentPosition());
         telemetry.addData("driveRF", robot.driveRightFront.getCurrentPosition());
