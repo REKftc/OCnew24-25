@@ -13,7 +13,7 @@ public class intakeTilt {
 
     public intakeTilt(HardwareMap hardwareMap) {
         intakeTilt = new OcServo(hardwareMap, "intakeTilt", INIT);
-        intakeVolt = hardwareMap.voltageSensor.iterator().next();
+        //intakeVolt = hardwareMap.voltageSensor.iterator().next();
     }
     public void setPosition(float pos){
         intakeTilt.setPosition(pos);
@@ -27,5 +27,5 @@ public class intakeTilt {
 
     public void setOut() { intakeTilt.setPosition(OUT); }
 
-    public void getVoltage() { intakeVolt.getVoltage();}
+    //public void getVoltage() { intakeVolt.getVoltage();}
 }

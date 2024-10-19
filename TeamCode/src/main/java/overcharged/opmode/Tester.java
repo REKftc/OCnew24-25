@@ -122,6 +122,7 @@ Tester
 
         drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+
         OcServo intakeTilt = robot.intakeTilt.intakeTilt;
         servos.add(intakeTilt);
         /*OcServo depoDoor = robot.depoDoor.depoDoor;
@@ -133,9 +134,9 @@ Tester
         OcServo rightPixel = robot.pixel.rightPixelDropper;
         servos.add(rightPixel);*/
 
+
         servoTestInfos = new ServoTestInfo[]{
 
-                // hSlides
                 new ServoTestInfo(
                         intakeTilt,
                         robot.intakeTilt.TRANSFER,
@@ -189,9 +190,11 @@ Tester
                     case SERVO_CALIBRATE:
                         servoCalibrate(servos);
                         break;
-                    case DEPO_CALIBRATE:
-                        //depoCalibrate(servos);
+                   /* case DEPO_CALIBRATE:
+                        depoCalibrate(servos);
                         break;
+
+                    */
                     case SERVO:
                         servoTest(servoTestInfos);
                         break;
@@ -205,11 +208,11 @@ Tester
                         ledTest();
                         break;*/
                     case SLIDE:
-                        //slideTest();
+                        slideTest();
                         break;
-                    case SENSOR:
-                   //     sensorTest();
-                        break;
+                    /*case SENSOR:
+                        sensorTest();
+                        break;*/
                     case NONE:
                     default:
                         break;
@@ -227,7 +230,7 @@ Tester
     private void encoderTest () {
         //Set all motors to FLOAT behavior while unpowered
         robot.drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-       //robot.vSlides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+      //  robot.vSlides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         while (opModeIsActive()) {
             long timeStamp = System.currentTimeMillis();
@@ -236,20 +239,17 @@ Tester
             if (gamepad1.start && Button.BTN_START.canPress(timeStamp)) {
 
                 robot.drive.resetPosition();
-          //      robot.vSlides.vSlides.resetPosition();
-            //    robot.hslides.hslidesR.resetPosition();
+              //  robot.vSlides.vSlides.resetPosition();
                 robot.hslides.hslides.resetPosition();
                 idle();
             }
             else if (gamepad1.left_stick_button && Button.BTN_BACK.canPress(timeStamp)) {
                 break;
             }
-/*
-            if (robot.vSlides.slideReachedBottom()) {
-                robot.vSlides.vSlides.resetPosition();
-            }
-            */
 
+           // if (robot.vSlides.slideReachedBottom()) {
+             //   robot.vSlides.vSlides.resetPosition();
+            //}
             telemetry.addData("Test", "Encoders");
             telemetry.addData("Front",
                     "Left:" + integerFormatter.format(robot.driveLeftBack.getCurrentPosition()) +
@@ -330,9 +330,8 @@ Tester
     /**
      * Test the limit switches at the bottom and top of the slide system
      */
-
     private void switchTest () {
-        //robot.hslides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+      //  robot.vSlides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
         while (opModeIsActive()) {
             long timeStamp = System.currentTimeMillis();
@@ -342,20 +341,17 @@ Tester
             }
 
             telemetry.addData("Test", "Switches");
-            telemetry.addData(robot.hslides.switchSlideDown.toString(), Boolean.toString(robot.hslides.switchSlideDown.isTouch()));
-        }
-    }
+          //  telemetry.addData(robot.vSlides.switchSlideDown.toString(), Boolean.toString(robot.vSlides.switchSlideDown.isTouch()));
             /*for (OcSwitch s : robot.switchs) {
                 telemetry.addData(s.toString(), Boolean.toString(s.isTouch()));
             }*/
-/*
+
             telemetry.addData("Back", "LeftStick");
 
             telemetry.update();
             idle();
         }
     }
-
 
     /**
      * Calibration of servos in robot
@@ -411,49 +407,8 @@ Tester
             idle();
         }
     }
-/*
-    private void depoCalibrate(List<OcServo> servoCalibrateList) {
-       // int leftPos = (int)(robot.depo.arm.getPosition());//(int)(servoCalibrateList.get(servoCalibrateCounter).getPosition());
-        //nt rightPos = (int)(robot.depo.wrist.getPosition());
 
-        while (opModeIsActive()) {
-            long timeStamp = System.currentTimeMillis();
 
-            ///Change servo position for calibration
-            if (gamepad1.x && Button.BTN_MINUS.canPress4Short(timeStamp)) {
-                leftPos -= MIN_SERVO_TICK;
-                rightPos -= MIN_SERVO_TICK;
-            } else if (gamepad1.b && Button.BTN_PLUS.canPress4Short(timeStamp)) {
-                leftPos += MIN_SERVO_TICK;
-                rightPos += MIN_SERVO_TICK;
-            } else if (gamepad1.y && Button.BTN_MAX.canPress(timeStamp)) {
-                leftPos -= MIN_SERVO_TICK;
-                rightPos += MIN_SERVO_TICK;
-            } else if (gamepad1.a && Button.BTN_MIN.canPress(timeStamp)) {
-                leftPos += MIN_SERVO_TICK;
-                rightPos -= MIN_SERVO_TICK;
-            } else if (gamepad1.right_stick_button && Button.BTN_MID.canPress(timeStamp)) {
-                leftPos = 128;
-            }
-            leftPos = Range.clip(leftPos, 0, 255);
-            rightPos = Range.clip(rightPos, 0, 255);
-            //servoCalibrateList.get(servoCalibrateCounter).setPosition(leftPos);
-          //  robot.depo.arm.setPosition(leftPos);
-            //robot.depo.wrist.setPosition(rightPos);
-
-            telemetry.addData("Test", "ServoCalibrate");
-            telemetry.addData("Adjust", "+:B -:X Max:Y Min:A Mid:RStick");
-            telemetry.addData("L Position", integerFormatter.format(leftPos));
-            telemetry.addData("R Position", integerFormatter.format(rightPos));
-           // telemetry.addData("Volt", robot.depo.armVolt.getVoltage());
-            telemetry.addData("Servo", servoCalibrateList.get(servoCalibrateCounter));
-            telemetry.addData("Select", "Next: RightTrigger Prev: LeftTrigger");
-            telemetry.addData("Back", "LeftStick");
-
-            telemetry.update();
-            idle();
-        }
-    }
     /**
      * Tests each individual servo
      * @param servoTestInfos the servos to be tested
@@ -643,16 +598,16 @@ Tester
 
         idle();
     }
-/*
+
     private void slideTest() {
         final int TIME = 1500;
-       // final OcMotorEx motors[] = new OcMotorEx[]{robot.vSlides.vSlides};
+        final OcMotorEx motors[] = new OcMotorEx[]{robot.hslides.hslides};
 
-//        robot.vSlides.vSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-  //      robot.vSlides.vSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    //    robot.vSlides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-      //  robot.vSlides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
+     /*   robot.vSlides.vSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.vSlides.vSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.vSlides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.vSlides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+*/
         // i = 1, slide down until touching the switch and reset the encoder
         // i = 2, slide up for 1.5 second and ignore the switch
         // i = 3, slide down until touching the switch and reset the encoder
@@ -667,7 +622,7 @@ Tester
 
                     if (gamepad1.left_stick_button && Button.BTN_BACK.canPress(timeStamp)) {
                         break back;
-                  //  } else if (robot.vSlides.switchSlideDown.isTouch() && i != 2) {
+                    } else if (robot.hslides.switchSlideDown.isTouch() && i != 2) {
                         motor.resetPosition();
                         break;
                     }
@@ -686,7 +641,7 @@ Tester
             }
         }
 
-       // robot.vSlides.vSlides.setPower(0);
+        robot.hslides.hslides.setPower(0);
         idle();
     }
 /*
@@ -720,5 +675,6 @@ Tester
             idle();
         }
         idle();
-    }*/
+    }
+    */
 }

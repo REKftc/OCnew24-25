@@ -162,6 +162,15 @@ public class teleop2 extends OpMode {
                 intakeMode = IntakeMode.OFF;
             }
         }
+        telemetry.addData("h limit switch: ", robot.hslides.switchSlideDown.isTouch());
+        telemetry.addData("driveLF", robot.driveLeftFront.getCurrentPosition());
+        telemetry.addData("driveLB", robot.driveLeftBack.getCurrentPosition());
+        telemetry.addData("driveRF", robot.driveRightFront.getCurrentPosition());
+        telemetry.addData("intake power", robot.intake.intake.getPower());
+        telemetry.addData("driveRB", robot.driveRightBack.getCurrentPosition());
+        telemetry.addData("hslideOut", robot.hslides.slideIn());
+        telemetry.addData("hslidePower", robot.hslides.getPower());
+        telemetry.update();
     }
 }
 

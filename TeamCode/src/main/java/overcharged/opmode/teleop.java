@@ -79,11 +79,11 @@ public class teleop extends OpMode {
             }
         }
         // Bring hSlides in
-        if (!hlimitswitch.getState() && (hSlideGoBottom||!hSlideisOut)) {// && robot.vSlides.getCurrentPosition() > robot.vSlides.start){//!robot.vSlides.slideReachedBottom()){
+        if (!hlimitswitch.getState() && (hSlideGoBottom)) {// && robot.vSlides.getCurrentPosition() > robot.vSlides.start){//!robot.vSlides.slideReachedBottom()){
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.hslides.hslides.setPower(-1);
             RobotLog.ii(TAG_SL, "Going down");
-        } else if (hlimitswitch.getState() && (hSlideGoBottom||!hSlideisOut)) {
+        } else if (hlimitswitch.getState() && (hSlideGoBottom)) {
             robot.hslides.forceStop();
             robot.hslides.hslides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hSlideGoBottom = false;
@@ -130,7 +130,6 @@ public class teleop extends OpMode {
         telemetry.addData("driveRF", robot.driveRightFront.getCurrentPosition());
         telemetry.addData("intake", robot.intake.intake.getCurrentPosition());
         telemetry.addData("driveRB", robot.driveRightBack.getCurrentPosition());
-       //telemetry.addData("hslideOut", robot.hslides.slideIn());
         telemetry.addData("hslidePower", robot.hslides.getPower());
 
         telemetry.update();

@@ -12,7 +12,6 @@
             <goBILDA5203SeriesMotor name="driveLF" port="2" />
             <goBILDA5203SeriesMotor name="driveLB" port="3" />
             <goBILDA5202SeriesMotor name="intake" port="1" />
-
             <SparkFunOTOS name="sensor_otos" port="0" bus="0"/>
             <Servo name="intakeTilt" port="0" />
 
