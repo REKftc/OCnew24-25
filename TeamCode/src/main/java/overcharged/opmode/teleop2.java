@@ -7,6 +7,7 @@ import static overcharged.config.RobotConstants.TAG_T;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -20,12 +21,13 @@ import overcharged.pedroPathing.follower.Follower;
 import overcharged.pedroPathing.pathGeneration.Vector;
 
 // BUTTON MAP
-// Base Driver
+/// Base Driver
 // Right Trigger - Intake on/off
 // Left Trigger - Outtake on/off
 // Right Bumper - Transfer positions
 // Left Bumper - hSlide toggle
 
+@Disabled
 @Config
 @TeleOp(name="teleop2", group="Teleop")
 public class teleop2 extends OpMode {
