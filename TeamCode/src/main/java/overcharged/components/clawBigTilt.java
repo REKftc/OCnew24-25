@@ -12,7 +12,7 @@ public class clawBigTilt {
     public static final float FLAT = 107f;//158f;
     public static final float OUT = 224f;//52f;
     public static final float WALL = 224f;//52f;
-    public static final float BUCKET = 224f;
+    public static final float BUCKET = 136f;
 
 
     public clawBigTilt(HardwareMap hardwareMap) {
@@ -31,6 +31,7 @@ public class clawBigTilt {
     public void setFlat() { clawBigTilt.setPosition(FLAT); }
 
     public void setOut() { clawBigTilt.setPosition(OUT); }
+    public void setBucket() { clawBigTilt.setPosition(BUCKET); }
 
     //public void getVoltage() { intakeVolt.getVoltage();}
 }

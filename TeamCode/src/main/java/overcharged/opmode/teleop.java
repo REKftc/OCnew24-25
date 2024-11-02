@@ -4,6 +4,7 @@ import static overcharged.config.RobotConstants.TAG_T;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -34,6 +35,7 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 
 @Config
 @TeleOp(name="teleop", group="Teleop")
+
 public class teleop extends OpMode {
     RobotMecanum robot;
     double slowPower = 0.9f;
@@ -142,7 +144,6 @@ public class teleop extends OpMode {
                 hSlideGoBottom = true;
                 slideLength = SlideLength.IN;
                 robot.intakeTilt.setTransfer();
-
                 intakeTransfer = true;
 
         }
@@ -239,7 +240,7 @@ public class teleop extends OpMode {
         if (gamepad2.dpad_right && Button.WALL.canPress(timestamp)) {
             robot.claw.setOpen();
             clawOpen = true;
-            robot.vSlides.moveEncoderTo(robot.vSlides.wall, 1);
+        //    robot.vSlides.moveEncoderTo(robot.vSlides.wall, 1);
             slideHeight = SlideHeight.WALL;
             depoTiltDelay = System.currentTimeMillis(); // Delay depo so it doesnt hit anything
         }
@@ -249,7 +250,7 @@ public class teleop extends OpMode {
         }
         // go to bar
         if (gamepad2.dpad_left && Button.BTN_MID.canPress(timestamp)) {
-            robot.vSlides.moveEncoderTo(robot.vSlides.mid, 1);
+         //   robot.vSlides.moveEncoderTo(robot.vSlides.mid, 1);
             slideHeight = SlideHeight.MID;
             depoTiltDelay = System.currentTimeMillis();
         }
@@ -260,18 +261,21 @@ public class teleop extends OpMode {
         }
         // Bucket
         if (gamepad2.dpad_up && Button.HIGH1.canPress(timestamp)) {
-            if(!(slideHeight == SlideHeight.HIGH1)) {
+           // if(!(slideHeight == SlideHeight.HIGH1)) {
                 slideHeight = SlideHeight.HIGH1;
-                robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1);
+                //robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1);
+                robot.vSlides.setPower(1f);
                 depoTiltDelay = System.currentTimeMillis();
 
-            }
-            if(!(slideHeight == SlideHeight.HIGH2)) {
+          //  }
+            /*if(!(slideHeight == SlideHeight.HIGH2)) {
                 slideHeight = SlideHeight.HIGH2;
-                robot.vSlides.moveEncoderTo(robot.vSlides.high2, 1);
+               // robot.vSlides.moveEncoderTo(robot.vSlides.high2, 1);
                 robot.depoHslide.setInit();
                 robot.clawBigTilt.setPosition(robot.clawBigTilt.BUCKET);
             }
+
+             */
         }
         if(slideHeight == SlideHeight.HIGH1 && System.currentTimeMillis()-depoTiltDelay==500){
             robot.depoHslide.setInit();
@@ -298,7 +302,7 @@ public class teleop extends OpMode {
                 robot.claw.setClose();
                 clawOpen = false;
             }
-        }
+        }/*
         //slight down (pressing)
         if((gamepad1.left_bumper && slideHeight != SlideHeight.DOWN)){
             if(buttonState == ButtonState.NO2) {
@@ -326,10 +330,11 @@ public class teleop extends OpMode {
                 level = robot.vSlides.high1;
         }
         if(buttonState == ButtonState.PRESSED){
-            robot.vSlides.moveEncoderTo(level-195, 0.7f);
+            //robot.vSlides.moveEncoderTo(level-195, 0.7f);
         } else if(buttonState == ButtonState.NO){
-            robot.vSlides.moveEncoderTo(level,0.9f);
+           // robot.vSlides.moveEncoderTo(level,0.9f);
         }
+        */
 
 
 
@@ -350,18 +355,18 @@ public class teleop extends OpMode {
     }
     public void slideBottom() {
         if (!vlimitswitch.getState()) {
-            robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.vSlides.down();
+         //   robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+           // robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.vSlides.setPower(-1f);
             RobotLog.ii(TAG_SL, "Going down");
         } else {
-            robot.vSlides.setPowerBoth(0f);
-            robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.vSlides.setPower(0f);
+            //robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            //robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             slideGoBottom = false;
             robot.intake.in();
-            robot.claw.setClose();
-            clawOpen = false;
+            robot.claw.setOpen();
+            clawOpen = true;
             RobotLog.ii(TAG_SL, "Force stopped");
         }
     }
