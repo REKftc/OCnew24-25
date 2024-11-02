@@ -14,6 +14,8 @@ import overcharged.config.RobotConstants;
 
 public class vSlides {
 
+    private RobotMecanum robot;
+
     public final OcMotorEx vSlidesL;
     public final OcMotorEx vSlidesR;
     public OcSwitch switchSlideDown;
