@@ -27,9 +27,9 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 // Right Bumper - Transfer positions
 // Left Bumper - hSlide toggle
 
-@Disabled
+
 @Config
-@TeleOp(name="teleop2", group="Teleop")
+@TeleOp(name="teleop backup", group="Teleop")
 public class teleop2 extends OpMode {
     RobotMecanum robot;
     double slowPower = 1;
@@ -41,6 +41,7 @@ public class teleop2 extends OpMode {
     boolean firstLoop = true;
     private DigitalChannel hlimitswitch;
     IntakeMode intakeMode = IntakeMode.OFF;
+    boolean latch = true;
 
     public enum IntakeMode {
         IN,
@@ -121,7 +122,15 @@ public class teleop2 extends OpMode {
         if (gamepad1.left_bumper && Button.TRANSFER.canPress(timestamp)){
             hSlideisOut = !hSlideisOut;
         }
-
+        if(gamepad1.y && Button.SLIGHT_DOWN.canPress(timestamp)){
+            if(latch){
+                robot.latch.setOut();
+                latch = false;
+            if(!latch){
+                robot.latch.setInit();
+                latch = true;
+            }
+        }
             // Logic for bringing hslides back in
         if (!hlimitswitch.getState() && hSlideGoBottom) {
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -176,5 +185,6 @@ public class teleop2 extends OpMode {
         telemetry.addData("hslidePower", robot.hslides.getPower());
         telemetry.update();
     }
+}
 }
 

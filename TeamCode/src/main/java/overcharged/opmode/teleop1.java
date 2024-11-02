@@ -59,6 +59,7 @@ public class teleop1 extends OpMode {
         if(firstLoop) {
             robot.intakeTilt.setInit();
             firstLoop = false;
+            //hSlideGoBottom = true;
             // robot.hslides.in();
         }
         robot.clearBulkCache();
@@ -96,7 +97,7 @@ public class teleop1 extends OpMode {
 
         }
 
-        if (gamepad2.left_bumper && Button.BTN_HORIZONTAL.canPress(timestamp)) {
+        if (gamepad2.b && Button.BTN_HORIZONTAL.canPress(timestamp)) {
             hSlideGoBottom = true;
             slideLength = SlideLength.IN;
             robot.intakeTilt.setTransfer();
@@ -165,15 +166,18 @@ public class teleop1 extends OpMode {
             //robot.hslides.moveEncoderTo(robot.hslides.hslides.getCurrentPosition()-(int)gamepad2.left_stick_y / 2, 0.3f);
             robot.hslides.hslides.setPower(-gamepad2.left_stick_y / 2);
         }
-        if(gamepad2.left_stick_y < -0.1 && robot.hslides.hslides.getCurrentPosition() < 500){
+        if(gamepad2.left_stick_y < -0.1 && robot.hslides.hslides.getCurrentPosition() > 500){
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             //robot.hslides.moveEncoderTo(robot.hslides.hslides.getCurrentPosition()-(int)gamepad2.left_stick_y / 2, 0.3f);
-            robot.hslides.hslides.setPower(-gamepad2.left_stick_y/2);
+            robot.hslides.hslides.setPower(-gamepad2.left_stick_y);
+        }
+        if(gamepad2.left_stick_y < -0.1 && robot.hslides.hslides.getCurrentPosition() < 500){
+            hSlideGoBottom = true;
         }
         telemetry.addData("h limit switch: ",   hlimitswitch.getState());
-        telemetry.addData("test:", robot.hslides.hslides.getPower());
-        telemetry.addData("test2: ", robot.hslides.hslides.getCurrentPosition());
+        telemetry.addData("hslide power:", robot.hslides.hslides.getPower());
+        telemetry.addData("hslide pos: ", robot.hslides.hslides.getCurrentPosition());
         telemetry.addData("driveLF", robot.driveLeftFront.getCurrentPosition());
         telemetry.addData("driveLB", robot.driveLeftBack.getCurrentPosition());
         telemetry.addData("driveRF", robot.driveRightFront.getCurrentPosition());
