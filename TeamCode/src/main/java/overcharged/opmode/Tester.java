@@ -124,7 +124,9 @@ Tester
 
 
         OcServo intakeTilt = robot.intakeTilt.intakeTilt;
+        OcServo hang = robot.hang.hang;
         servos.add(intakeTilt);
+        servos.add(hang);
         /*OcServo depoDoor = robot.depoDoor.depoDoor;
         servos.add(depoDoor);
         OcServo depoTilt = robot.depoTilt.depoTilt;
@@ -141,6 +143,10 @@ Tester
                         intakeTilt,
                         robot.intakeTilt.TRANSFER,
                         robot.intakeTilt.OUT),
+                new ServoTestInfo(
+                        hang,
+                        robot.hang.INIT,
+                        robot.hang.OUT),
 
         };
 

@@ -26,6 +26,7 @@ public class teleop extends OpMode {
     boolean intakeTransfer = false;
     private DigitalChannel hlimitswitch;
     boolean firstLoop = true;
+    boolean hangOut = false;
     SlideLength slideLength = SlideLength.IN;
     IntakeMode intakeMode = IntakeMode.OFF;
     public enum IntakeMode {
@@ -95,15 +96,23 @@ public class teleop extends OpMode {
 
         }
 
-        if (gamepad1.left_bumper && Button.BTN_HORIZONTAL.canPress(timestamp)) {
+        if (gamepad2.left_bumper && Button.BTN_HORIZONTAL.canPress(timestamp)) {
                 hSlideGoBottom = true;
                 slideLength = SlideLength.IN;
                 robot.intakeTilt.setTransfer();
                 intakeTransfer = true;
 
         }
-
-
+        if (gamepad2.a && Button.BTN_HANG.canPress(timestamp)) {
+            if(!hangOut) {
+                robot.hang.setOut();
+                hangOut = true;
+            }
+            else if(hangOut){
+                robot.hang.setInit();
+                hangOut = false;
+            }
+        }
         // Bring hSlides in
         if (!hlimitswitch.getState() && (hSlideGoBottom)) {// && robot.vSlides.getCurrentPosition() > robot.vSlides.start){//!robot.vSlides.slideReachedBottom()){
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -129,7 +138,7 @@ public class teleop extends OpMode {
         }
         // Intake On and Off (in)
         if (gamepad2.right_trigger > 0.9 && Button.INTAKE.canPress(timestamp)) {//gamepad1.right_bumper && Button.INTAKE.canPress(timestamp)){
-            if (intakeMode == IntakeMode.OFF) {
+            if (intakeMode == IntakeMode.OFF||intakeMode == IntakeMode.OUT) {
                 robot.intake.in();
                 intakeMode = IntakeMode.IN;
             } else{
@@ -138,7 +147,7 @@ public class teleop extends OpMode {
             }
         }
         if(gamepad2.left_trigger > 0.9 && Button.INTAKEOUT.canPress(timestamp)){//bumper && Button.INTAKEOUT.canPress(timestamp)){
-            if(intakeMode == IntakeMode.OFF) {
+            if(intakeMode == IntakeMode.OFF|| intakeMode == IntakeMode.IN) {
                 robot.intake.out();
                 intakeMode = IntakeMode.OUT;
             }

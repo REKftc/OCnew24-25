@@ -30,6 +30,7 @@ public class RobotMecanum {
     public MecanumDrive drive;
 
     public Intake intake;
+    public hang hang;
     public hslides hslides;
     public intakeTilt intakeTilt;
 
@@ -127,6 +128,13 @@ public class RobotMecanum {
             intakeTilt = new intakeTilt(hardwareMap);
         } catch (Exception e){
             RobotLog.ee(RobotConstants.TAG_R,  "missing: IntakeBigTilt " + e.getMessage());
+            missing = missing + ", IntakeBigTilt";
+            numberMissing++;
+        }
+        try {
+            hang = new hang(hardwareMap);
+        } catch (Exception e){
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: hang " + e.getMessage());
             missing = missing + ", IntakeBigTilt";
             numberMissing++;
         }

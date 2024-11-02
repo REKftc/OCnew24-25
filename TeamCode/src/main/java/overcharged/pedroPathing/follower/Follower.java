@@ -28,6 +28,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+
+import overcharged.components.OcMotor;
 import overcharged.pedroPathing.localization.Pose;
 import overcharged.pedroPathing.localization.PoseUpdater;
 import overcharged.pedroPathing.pathGeneration.BezierPoint;
@@ -162,16 +164,18 @@ public class Follower {
         driveVectorScaler = new DriveVectorScaler(FollowerConstants.frontLeftVector);
         poseUpdater = new PoseUpdater(hardwareMap);
 
-        leftFront = hardwareMap.get(DcMotorEx.class, leftFrontMotorName);
-        leftRear = hardwareMap.get(DcMotorEx.class, leftRearMotorName);
-        rightRear = hardwareMap.get(DcMotorEx.class, rightRearMotorName);
-        rightFront = hardwareMap.get(DcMotorEx.class, rightFrontMotorName);
+        leftFront = hardwareMap.get(DcMotorEx.class, "driveLF");
+        leftRear = hardwareMap.get(DcMotorEx.class, "driveLB");
+        rightRear = hardwareMap.get(DcMotorEx.class, "driveRB");
+        rightFront = hardwareMap.get(DcMotorEx.class, "driveRF");
 
         // TODO: Make sure that this is the direction your motors need to be reversed in.
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-
+        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+        rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
         motors = Arrays.asList(leftFront, leftRear, rightFront, rightRear);
+
 
         for (DcMotorEx motor : motors) {
             MotorConfigurationType motorConfigurationType = motor.getMotorType().clone();

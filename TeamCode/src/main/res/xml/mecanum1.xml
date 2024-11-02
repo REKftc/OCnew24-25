@@ -5,6 +5,7 @@
             <goBILDA5202SeriesMotor name="hslides" port="3" />
             <goBILDA5203SeriesMotor name="driveRB" port="2" />
             <DigitalDevice name="hlimitswitch" port="2" />
+            <Servo name="hang" port="5" />
 
         </LynxModule>
         <LynxModule name="Control Hub" port="173">

@@ -71,7 +71,7 @@ public class autoBlueBlueSafe3 extends OpMode{
 
     // OTHER POSES
     private Pose moveOutPoint, beforeFirst, aBitForward, goToBBLlineUp, goToBBL, startToObs, goToBBMlineUp, goToBBM, goToBBRlineUp, goToBBR;
-    private Pose startPose = new Pose(9.5+48, 144-7, 0);
+    private Pose startPose = new Pose(6.5+48, 144-7, 0);
 
     private Path initialObs, firstMoveToPos, findSpotOne, firstCycleToObs, firstCycleBack, secondCycleToObs, secondCycleBack, finalCycleToObs;
 
@@ -79,7 +79,7 @@ public class autoBlueBlueSafe3 extends OpMode{
 
     //TODO: Starting from here are the poses for the paths
     public void firstSpecimen(){
-        startToObs = new Pose(24, 144-7, 0);
+        startToObs = new Pose(40, 144-4, 0);
     }
     public void startingGoalPose(){
         moveOutPoint = new Pose(22, 120, 0);
@@ -103,7 +103,9 @@ public class autoBlueBlueSafe3 extends OpMode{
 
     //TODO: here are where the paths are defined
     public void buildPaths() {
-        initialObs = new Path(new BezierLine(new Point(startPose), new Point(startToObs)));
+        initialObs = new Path(new BezierCurve(new Point(startPose), new Point(44, 144-4, 0), new Point(startToObs)));
+        initialObs.setConstantHeadingInterpolation(0);
+        initialObs.setPathEndTimeoutConstraint(2);
 
         firstMoveToPos = new Path(new BezierCurve(new Point(startToObs), new Point(moveOutPoint), new Point(beforeFirst)));
         firstMoveToPos.setConstantHeadingInterpolation(0);
@@ -139,6 +141,10 @@ public class autoBlueBlueSafe3 extends OpMode{
             // Auto Body
             //
             case 10: // scores initial specimen
+                follower.followPath(initialObs);
+                setPathState(100);
+                break;
+            case 101:
                 follower.followPath(firstMoveToPos);
                 setPathState(11);
                 break;
