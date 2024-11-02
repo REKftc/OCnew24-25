@@ -21,6 +21,7 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 // JOYSTICKS - DRIVING
 // rBumper - hSlides
 // lBumper - vSlides Slight down
+// A - latch
 /// CONTROLLER 2
 // lBumper - hSlides in/Transfer
 // rBumper - Transfer
@@ -47,6 +48,7 @@ public class teleop extends OpMode {
     boolean hSlideGoBottom = false;
     boolean intakeOn = false;
     boolean clawOpen = true;
+    boolean latch = false;
     boolean hSlideisOut = false;
     boolean intakeTransfer = false;
     private DigitalChannel hlimitswitch;
@@ -124,7 +126,6 @@ public class teleop extends OpMode {
         }
         // Bring hSlides out
         if (gamepad1.right_bumper && Button.BTN_HORIZONTAL.canPress(timestamp)) {
-            robot.latch.setOut();
             if (slideLength==SlideLength.IN||slideLength == SlideLength.LONG) {
                 hSlideisOut = true;
                 slideLength = SlideLength.MID;
@@ -138,6 +139,17 @@ public class teleop extends OpMode {
                 robot.hslides.moveEncoderTo(500, 0.6f);
             }
 
+        }
+        //latch
+        if (gamepad2.a && Button.CLAW.canPress(timestamp)) {
+            if(!latch) {
+                robot.latch.setOut();
+                latch = true;
+            }
+            if(latch){
+                robot.claw.setInit();
+                latch = false;
+            }
         }
 
         if (gamepad2.left_bumper && Button.BTN_HORIZONTAL.canPress(timestamp)) {
