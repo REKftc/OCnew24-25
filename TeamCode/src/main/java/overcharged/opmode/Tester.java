@@ -125,8 +125,19 @@ Tester
 
         OcServo intakeTilt = robot.intakeTilt.intakeTilt;
         OcServo hang = robot.hang.hang;
+        OcServo latch = robot.latch.latch;
+        OcServo claw = robot.claw.claw;
+        OcServo clawSmallTilt = robot.clawSmallTilt.clawSmallTilt;
+        OcServo clawBigTilt = robot.clawBigTilt.clawBigTilt;
+        OcServo depoHslide = robot.depoHslide.depoHslide;
         servos.add(intakeTilt);
         servos.add(hang);
+        servos.add(latch);
+        servos.add(claw);
+        servos.add(clawSmallTilt);
+        servos.add(clawBigTilt);
+        servos.add(depoHslide);
+
         /*OcServo depoDoor = robot.depoDoor.depoDoor;
         servos.add(depoDoor);
         OcServo depoTilt = robot.depoTilt.depoTilt;
@@ -145,6 +156,10 @@ Tester
                         robot.intakeTilt.OUT),
                 new ServoTestInfo(
                         hang,
+                        robot.hang.INIT,
+                        robot.hang.OUT),
+                new ServoTestInfo(
+                        latch,
                         robot.hang.INIT,
                         robot.hang.OUT),
 
@@ -236,7 +251,9 @@ Tester
     private void encoderTest () {
         //Set all motors to FLOAT behavior while unpowered
         robot.drive.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-      //  robot.vSlides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.vSlides.vSlidesR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.vSlides.vSlidesL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
 
         while (opModeIsActive()) {
             long timeStamp = System.currentTimeMillis();
@@ -245,7 +262,8 @@ Tester
             if (gamepad1.start && Button.BTN_START.canPress(timeStamp)) {
 
                 robot.drive.resetPosition();
-              //  robot.vSlides.vSlides.resetPosition();
+                robot.vSlides.vSlidesR.resetPosition();
+                robot.vSlides.vSlidesL.resetPosition();
                 robot.hslides.hslides.resetPosition();
                 idle();
             }
@@ -609,11 +627,11 @@ Tester
         final int TIME = 1500;
         final OcMotorEx motors[] = new OcMotorEx[]{robot.hslides.hslides};
 
-     /*   robot.vSlides.vSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.vSlides.vSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.vSlides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        robot.vSlides.vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-*/
+        robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.vSlides.vSlidesR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        robot.vSlides.vSlidesL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
         // i = 1, slide down until touching the switch and reset the encoder
         // i = 2, slide up for 1.5 second and ignore the switch
         // i = 3, slide down until touching the switch and reset the encoder
@@ -648,6 +666,8 @@ Tester
         }
 
         robot.hslides.hslides.setPower(0);
+        robot.vSlides.vSlidesR.setPower(0);
+        robot.vSlides.vSlidesL.setPower(0);
         idle();
     }
 /*

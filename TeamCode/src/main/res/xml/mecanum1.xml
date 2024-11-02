@@ -4,8 +4,15 @@
         <LynxModule name="Expansion Hub 2" port="2">
             <goBILDA5202SeriesMotor name="hslides" port="3" />
             <goBILDA5203SeriesMotor name="driveRB" port="2" />
+            <goBILDA5202SeriesMotor name="vslidesL" port="0" />
+            <goBILDA5202SeriesMotor name="vslidesR" port="1" />
             <DigitalDevice name="hlimitswitch" port="2" />
             <Servo name="hang" port="5" />
+            <Servo name="clawSmallTilt" port="1" />
+            <Servo name="depoHslide" port="2" />
+            <Servo name="clawBigTilt" port="3" />
+            <Servo name="claw" port="4" />
+            <Servo name="latch" port="0" />
 
         </LynxModule>
         <LynxModule name="Control Hub" port="173">

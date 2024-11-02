@@ -31,6 +31,12 @@ public class RobotMecanum {
 
     public Intake intake;
     public hang hang;
+    public latch latch;
+    public vSlides vSlides;
+    public clawSmallTilt clawSmallTilt;
+    public clawBigTilt clawBigTilt;
+    public claw claw;
+    public depoHslide depoHslide;
     public hslides hslides;
     public intakeTilt intakeTilt;
 
@@ -118,6 +124,13 @@ public class RobotMecanum {
             numberMissing++;
         }
         try {
+            vSlides = new vSlides(hardwareMap);
+        } catch (Exception e){
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: vslides " + e.getMessage());
+            missing = missing + ", vslides";
+            numberMissing++;
+        }
+        try {
             intake = new Intake(hardwareMap);
         } catch (Exception e){
             RobotLog.ee(RobotConstants.TAG_R,  "missing: intake " + e.getMessage());
@@ -132,10 +145,45 @@ public class RobotMecanum {
             numberMissing++;
         }
         try {
+            clawSmallTilt = new clawSmallTilt(hardwareMap);
+        } catch (Exception e){
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: clawSmallTilt " + e.getMessage());
+            missing = missing + ", clawSmallTilt";
+            numberMissing++;
+        }
+        try {
+            clawBigTilt = new clawBigTilt(hardwareMap);
+        } catch (Exception e){
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: clawBigTilt " + e.getMessage());
+            missing = missing + ", clawBigTilt";
+            numberMissing++;
+        }
+        try {
+            claw = new claw(hardwareMap);
+        } catch (Exception e){
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: claw " + e.getMessage());
+            missing = missing + ", claw";
+            numberMissing++;
+        }
+        try {
+            depoHslide = new depoHslide(hardwareMap);
+        } catch (Exception e){
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: depohslides " + e.getMessage());
+            missing = missing + ", depohslides";
+            numberMissing++;
+        }
+        try {
             hang = new hang(hardwareMap);
         } catch (Exception e){
             RobotLog.ee(RobotConstants.TAG_R,  "missing: hang " + e.getMessage());
             missing = missing + ", IntakeBigTilt";
+            numberMissing++;
+        }
+        try {
+            latch = new latch(hardwareMap);
+        } catch (Exception e) {
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: latch " + e.getMessage());
+            missing = missing + ", latch";
             numberMissing++;
         }
 

@@ -34,7 +34,7 @@ public class hslides {
 
     public hslides(HardwareMap hardwareMap) {
         hslides = new OcMotorEx(hardwareMap, "hslides", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
-       // hslidesL = new OcMotorEx(hardwareMap, "hslidesL", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
+        // hslidesL = new OcMotorEx(hardwareMap, "hslidesL", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
         //hslidesR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         //hslidesL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hslides.setTargetPositionPIDFCoefficients(p, i, d, f);
@@ -58,7 +58,7 @@ public class hslides {
         }
         this.switchSlideDown = lswitch2;
         start = hslides.getCurrentPosition();
-       // start = hslidesL.getCurrentPosition();
+        // start = hslidesL.getCurrentPosition();
 
         RobotLog.ii(TAG_SL, "Initialized the Slide component numberMissing=" + numberMissing + " missing=" + missing);
     }
@@ -69,9 +69,9 @@ public class hslides {
         hslides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //hslidesL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         hslides.setTargetPosition(pos);
-      //  hslidesL.setTargetPosition(pos);
+        //  hslidesL.setTargetPosition(pos);
         hslides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-       // hslidesL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        // hslidesL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         //hslidesR.setPower(power);
         hslides.setPower(power);
     }
@@ -121,4 +121,3 @@ public class hslides {
         hslides.setPower(0f);
     }
 }
-
