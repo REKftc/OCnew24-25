@@ -7,6 +7,7 @@
             <goBILDA5202SeriesMotor name="vslidesL" port="0" />
             <goBILDA5202SeriesMotor name="vslidesR" port="1" />
             <DigitalDevice name="hlimitswitch" port="2" />
+            <DigitalDevice name="vlimitswitch" port="0" />
             <Servo name="hang" port="5" />
             <Servo name="clawSmallTilt" port="1" />
             <Servo name="depoHslide" port="2" />

@@ -26,7 +26,10 @@ public class vSlides {
     public static final int START = 0;
     public static final int PRESET1 = 142;
     public static final int OUT = 1000;
-
+    public static final int wall = 300;
+    public static final int mid = 400;
+    public static final int high1 = 600;
+    public static final int high2 = 800;
     public static double p = 18;
     public static double i = 0;
     public static double d = 0;
@@ -87,6 +90,24 @@ public class vSlides {
         vSlidesL.setPower(-1f);
     }
 
+
+
+    public boolean slideIn() {
+        return switchSlideDown.isTouch() && vSlidesR.getCurrentPosition() <= start;
+    }
+
+    public void down(){
+        vSlidesL.setPower(-0.7f);
+        vSlidesR.setPower(-0.7f);
+    }
+    public void inAuto(){
+        vSlidesL.setPower(-0.9f);
+        vSlidesR.setPower(-0.9f);
+    }
+    public void setPowerBoth(float power){
+        vSlidesL.setPower(power);
+        vSlidesR.setPower(power);
+    }
     public void moveEncoderTo(int pos, float power) {
         vSlidesR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         vSlidesL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -96,19 +117,6 @@ public class vSlides {
         vSlidesL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         vSlidesR.setPower(power);
         vSlidesL.setPower(power);
-    }
-
-    public boolean slideIn() {
-        return switchSlideDown.isTouch() && vSlidesR.getCurrentPosition() <= start;
-    }
-
-    public void in(){
-        vSlidesL.setPower(-0.7f);
-        vSlidesR.setPower(-0.7f);
-    }
-    public void inAuto(){
-        vSlidesL.setPower(-0.9f);
-        vSlidesR.setPower(-0.9f);
     }
 
     public void setPower(float power)
