@@ -1,5 +1,6 @@
 package overcharged.pedroPathing.localization.localizers;
 
+import com.acmerobotics.roadrunner.ftc.SparkFunOTOSCorrected;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -73,7 +74,7 @@ public class OTOSLocalizer extends Localizer {
           "SparkFunOTOS Corrected" in your robot config
          */
         // TODO: replace this with your OTOS port
-        otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
+        otos = hardwareMap.get(SparkFunOTOSCorrected.class, "sensor_otos");
 
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.RADIANS);
@@ -86,7 +87,7 @@ public class OTOSLocalizer extends Localizer {
 
         // TODO: replace these with your tuned multipliers
         otos.setAngularScalar(1.017013);
-        otos.setLinearScalar(100);
+        otos.setLinearScalar(1);
 
         otos.calibrateImu();
         otos.resetTracking();

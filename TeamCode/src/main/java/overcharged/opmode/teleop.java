@@ -14,6 +14,24 @@ import overcharged.components.Button;
 import overcharged.components.RobotMecanum;
 import overcharged.pedroPathing.follower.Follower;
 import overcharged.pedroPathing.pathGeneration.Vector;
+
+// BUTTON MAPPING
+/// CONTROLLER 1
+// JOYSTICKS - DRIVING
+// rBumper - hSlides
+// lBumper - vSlides Slight down
+/// CONTROLLER 2
+// lBumper - hSlides in/Transfer
+// rBumper - Transfer
+// rTrigger - intake
+// lTrigger - outtake
+// left joystick - hSlides
+// dpad right - wall vslides
+// dpad left - mid vslides
+// dpad up - high vslides
+// dpad down - reset vslides
+// A - depo claw
+
 @Config
 @TeleOp(name="teleop", group="Teleop")
 public class teleop extends OpMode {
@@ -308,7 +326,7 @@ public class teleop extends OpMode {
                 level = robot.vSlides.high1;
         }
         if(buttonState == ButtonState.PRESSED){
-                robot.vSlides.moveEncoderTo(level-195, 0.7f);
+            robot.vSlides.moveEncoderTo(level-195, 0.7f);
         } else if(buttonState == ButtonState.NO){
             robot.vSlides.moveEncoderTo(level,0.9f);
         }
@@ -316,9 +334,9 @@ public class teleop extends OpMode {
 
 
         telemetry.addData("h limit switch: ",   hlimitswitch.getState());
-        telemetry.addData("v limit switch: ",   vlimitswitch.getState());
-        telemetry.addData("vslideR:", robot.vSlides.vSlidesR.getPower());
-        telemetry.addData("vslideL:", robot.vSlides.vSlidesL.getPower());
+        //telemetry.addData("v limit switch: ",   vlimitswitch.getState());
+        //telemetry.addData("vslideR:", robot.vSlides.vSlidesR.getPower());
+        //telemetry.addData("vslideL:", robot.vSlides.vSlidesL.getPower());
         telemetry.addData("test:", robot.hslides.hslides.getPower());
         telemetry.addData("test2: ", robot.hslides.hslides.getCurrentPosition());
         telemetry.addData("driveLF", robot.driveLeftFront.getCurrentPosition());
@@ -331,7 +349,7 @@ public class teleop extends OpMode {
         telemetry.update();
     }
     public void slideBottom() {
-        if (!hlimitswitch.getState()) {
+        if (!vlimitswitch.getState()) {
             robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.vSlides.down();

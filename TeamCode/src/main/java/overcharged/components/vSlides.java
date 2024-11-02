@@ -36,6 +36,8 @@ public class vSlides {
     public static double f = 0;
 
     public vSlides(HardwareMap hardwareMap) {
+
+
         vSlidesR = new OcMotorEx(hardwareMap, "hslidesR", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
         vSlidesL = new OcMotorEx(hardwareMap, "hslidesL", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
         vSlidesR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -48,13 +50,13 @@ public class vSlides {
         OcMotorEx slideL = null;
         OcSwitch lswitch2 = null;
         try {
-            lswitch2 = new OcSwitch(hardwareMap, "hlimitswitch", true);
+            lswitch2 = new OcSwitch(hardwareMap, "vlimitswitch", true);
             boolean isSwitchNull = switchSlideDown == null ? true : false;
             switchs.add(lswitch2);
             RobotLog.ii(TAG_H, "limitSwitch(isNull)? " + isSwitchNull);
         } catch (Exception e) {
             RobotLog.ee(RobotConstants.TAG_R, "missing: limitSwitch " + e.getMessage());
-            missing = missing + ", hlimitswitch";
+            missing = missing + ", vlimitswitch";
             numberMissing++;
             boolean isSwitchNull = switchSlideDown == null ? true : false;
             RobotLog.ii(TAG_H, "limitSwitch(catch)? " + isSwitchNull);
