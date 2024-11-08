@@ -9,10 +9,10 @@
             <DigitalDevice name="hlimitswitch" port="2" />
             <DigitalDevice name="vlimitswitch" port="0" />
             <Servo name="hang" port="1" />
-            <Servo name="clawSmallTilt" port="0" />
-            <Servo name="depoHslide" port="2" />
-            <Servo name="clawBigTilt" port="4" />
-            <Servo name="claw" port="5" />
+            <Servo name="clawSmallTilt" port="2" />
+            <Servo name="depoHslide" port="3" />
+            <Servo name="clawBigTilt" port="5" />
+            <Servo name="claw" port="4" />
 
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
