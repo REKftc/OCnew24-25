@@ -134,6 +134,7 @@ public class teleop2 extends OpMode {
                     latch = true;
                 }
             }
+        }
         // Logic for bringing hslides back in
         if (!hlimitswitch.getState() && hSlideGoBottom) {
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -159,23 +160,23 @@ public class teleop2 extends OpMode {
         }
 
         // Intake On and Off (in)
-        if (gamepad1.right_trigger > 0.9 && Button.INTAKE.canPress(timestamp)) {//gamepad1.right_bumper && Button.INTAKE.canPress(timestamp)){
-            if (intakeMode == teleop.IntakeMode.OFF||intakeMode == teleop.IntakeMode.OUT) {
+        if (gamepad2.right_trigger > 0.9 && Button.INTAKE.canPress(timestamp)) {//gamepad1.right_bumper && Button.INTAKE.canPress(timestamp)){
+            if (intakeMode == teleop2.IntakeMode.OFF||intakeMode == teleop2.IntakeMode.OUT) {
                 robot.intake.in();
-                intakeMode = teleop.IntakeMode.IN;
+                intakeMode = teleop2.IntakeMode.IN;
             } else{
                 robot.intake.off();
-                intakeMode = teleop.IntakeMode.OFF;
+                intakeMode = teleop2.IntakeMode.OFF;
             }
         }
-        if(gamepad1.left_trigger > 0.9 && Button.INTAKEOUT.canPress(timestamp)){//bumper && Button.INTAKEOUT.canPress(timestamp)){
-            if(intakeMode == teleop.IntakeMode.OFF|| intakeMode == teleop.IntakeMode.IN) {
+        if(gamepad2.left_trigger > 0.9 && Button.INTAKEOUT.canPress(timestamp)){//bumper && Button.INTAKEOUT.canPress(timestamp)){
+            if(intakeMode == teleop2.IntakeMode.OFF|| intakeMode == teleop2.IntakeMode.IN) {
                 robot.intake.out();
-                intakeMode = teleop.IntakeMode.OUT;
+                intakeMode = teleop2.IntakeMode.OUT;
             }
             else {
                 robot.intake.off();
-                intakeMode = teleop.IntakeMode.OFF;
+                intakeMode = teleop2.IntakeMode.OFF;
             }
         }
         if (gamepad2.a && Button.CLAW.canPress(timestamp)) {
@@ -197,8 +198,5 @@ public class teleop2 extends OpMode {
         telemetry.addData("hslideOut", robot.hslides.slideIn());
         telemetry.addData("hslidePower", robot.hslides.getPower());
         telemetry.update();
-
-        }
     }
-
 }

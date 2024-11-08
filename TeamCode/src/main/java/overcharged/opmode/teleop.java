@@ -377,8 +377,8 @@ public class teleop extends OpMode {
 
         telemetry.addData("h limit switch: ",   hlimitswitch.getState());
         //telemetry.addData("v limit switch: ",   vlimitswitch.getState());
-        //telemetry.addData("vslideR:", robot.vSlides.vSlidesR.getPower());
-        //telemetry.addData("vslideL:", robot.vSlides.vSlidesL.getPower());
+        telemetry.addData("vslideR:", robot.vSlides.vSlidesR.getPower());
+        telemetry.addData("vslideL:", robot.vSlides.vSlidesL.getPower());
         telemetry.addData("power:", robot.hslides.hslides.getPower());
         telemetry.addData("go back:", hSlideGoBottom);
         telemetry.addData("pos: ", robot.hslides.hslides.getCurrentPosition());

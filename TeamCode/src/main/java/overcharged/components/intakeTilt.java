@@ -9,7 +9,7 @@ public class intakeTilt {
     public VoltageSensor intakeVolt;
     public static final float INIT = 36f;//230f;
     public static final float TRANSFER = 36f;//175f;
-    public static final float FLAT = 171f;//158f;
+    public static final float FLAT = 128f;//158f;
     public static final float OUT = 255f;//52f;
 
 
