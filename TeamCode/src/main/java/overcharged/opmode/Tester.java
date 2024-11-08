@@ -1,18 +1,10 @@
 package overcharged.opmode;
 
-import android.graphics.Color;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.Range;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -165,7 +157,7 @@ Tester
                 new ServoTestInfo(
                         clawSmallTilt,
                         robot.clawSmallTilt.INIT,
-                        robot.clawSmallTilt.OUT),
+                        robot.clawSmallTilt.BUCKET),
                 new ServoTestInfo(
                         clawBigTilt,
                         robot.clawBigTilt.INIT,
@@ -373,7 +365,7 @@ Tester
             }
 
             telemetry.addData("Test", "Switches");
-          //  telemetry.addData(robot.vSlides.switchSlideDown.toString(), Boolean.toString(robot.vSlides.switchSlideDown.isTouch()));
+          //  telemetry.addData(robot.vSlides.vlimitswitch.toString(), Boolean.toString(robot.vSlides.vlimitswitch.isTouch()));
             /*for (OcSwitch s : robot.switchs) {
                 telemetry.addData(s.toString(), Boolean.toString(s.isTouch()));
             }*/

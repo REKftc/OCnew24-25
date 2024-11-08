@@ -16,7 +16,7 @@ public class vSlides {
 
     public final OcMotorEx vSlidesL;
     public final OcMotorEx vSlidesR;
-    public OcSwitch switchSlideDown;
+    public OcSwitch vlimitswitch;
     public final List<OcSwitch> switchs = new ArrayList<>();
 
     public double start;
@@ -38,8 +38,8 @@ public class vSlides {
     public vSlides(HardwareMap hardwareMap) {
 
 
-        vSlidesR = new OcMotorEx(hardwareMap, "hslidesR", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
-        vSlidesL = new OcMotorEx(hardwareMap, "hslidesL", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlidesR = new OcMotorEx(hardwareMap, "vslidesR", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlidesL = new OcMotorEx(hardwareMap, "vslidesL", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
         vSlidesR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vSlidesL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vSlidesR.setTargetPositionPIDFCoefficients(p, i, d, f);
@@ -51,17 +51,17 @@ public class vSlides {
         OcSwitch lswitch2 = null;
         try {
             lswitch2 = new OcSwitch(hardwareMap, "vlimitswitch", true);
-            boolean isSwitchNull = switchSlideDown == null ? true : false;
+            boolean isSwitchNull = vlimitswitch == null ? true : false;
             switchs.add(lswitch2);
             RobotLog.ii(TAG_H, "limitSwitch(isNull)? " + isSwitchNull);
         } catch (Exception e) {
             RobotLog.ee(RobotConstants.TAG_R, "missing: limitSwitch " + e.getMessage());
             missing = missing + ", vlimitswitch";
             numberMissing++;
-            boolean isSwitchNull = switchSlideDown == null ? true : false;
+            boolean isSwitchNull = vlimitswitch == null ? true : false;
             RobotLog.ii(TAG_H, "limitSwitch(catch)? " + isSwitchNull);
         }
-        this.switchSlideDown = lswitch2;
+        this.vlimitswitch = lswitch2;
         start = vSlidesR.getCurrentPosition();
         start = vSlidesL.getCurrentPosition();
 
@@ -95,7 +95,7 @@ public class vSlides {
 
 
     public boolean slideIn() {
-        return switchSlideDown.isTouch() && vSlidesR.getCurrentPosition() <= start;
+        return vlimitswitch.isTouch() && vSlidesR.getCurrentPosition() <= start;
     }
 
     public void down(){

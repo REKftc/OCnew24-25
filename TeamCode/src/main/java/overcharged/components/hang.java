@@ -8,7 +8,7 @@ public class hang {
     //public VoltageSensor intakeVolt;
     public static final float INIT = 189f;
    // public static final float TRANSFER = 70f;//175f;
-   // public static final float FLAT = 171f;//158f;
+   // public static final float SPEC = 171f;//158f;
     public static final float OUT = 49f;
 
 
@@ -25,7 +25,7 @@ public class hang {
 
     //public void setTransfer() { intakeTilt.setPosition(TRANSFER); }
 
-   // public void setFlat() { intakeTilt.setPosition(FLAT); }
+   // public void setFlat() { intakeTilt.setPosition(SPEC); }
 
     public void setOut() { hang.setPosition(OUT); }
 

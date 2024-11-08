@@ -10,8 +10,8 @@ public class clawBigTilt {
     public static final float INIT = 70f;//230f;
     public static final float TRANSFER = 70f;//175f;
     public static final float FLAT = 107f;//158f;
-    public static final float OUT = 224f;//52f;
-    public static final float WALL = 224f;//52f;
+    public static final float OUT = 51f;//52f;
+    public static final float WALL = 9f;//52f;
     public static final float BUCKET = 136f;
 
 

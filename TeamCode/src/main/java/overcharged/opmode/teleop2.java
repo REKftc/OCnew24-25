@@ -35,7 +35,10 @@ public class teleop2 extends OpMode {
     double slowPower = 1;
     long startTime;
     boolean hSlideGoBottom = false;
+    long intakeTiltDelay;
+    boolean intakeDelay = false;
     boolean intakeOn = false;
+    boolean clawOpen = true;
     boolean hSlideisOut = false;
     boolean intakeTransfer = false;
     boolean firstLoop = true;
@@ -69,7 +72,7 @@ public class teleop2 extends OpMode {
 
     @Override
     public void loop() {
-        if(firstLoop) {
+        if (firstLoop) {
             robot.intakeTilt.setInit();
             firstLoop = false;
             robot.hslides.in();
@@ -98,9 +101,9 @@ public class teleop2 extends OpMode {
                 // Stop the hslides if joystick is not being pushed
                 robot.hslides.hslides.setPower(0);
             }
-            double frontLeftPower = (( x + rx) / denominator) * slowPower;
-            double backLeftPower = ((x + rx) / denominator) * slowPower;
-            double frontRightPower = ((x - rx) / denominator) * slowPower;
+            double frontLeftPower = ((x + rx) / denominator) * slowPower;
+            double backLeftPower = ((-x + rx) / denominator) * slowPower;
+            double frontRightPower = ((- x - rx) / denominator) * slowPower;
             double backRightPower = ((x - rx) / denominator) * slowPower;
 
             robot.driveLeftFront.setPower(frontLeftPower);
@@ -119,19 +122,19 @@ public class teleop2 extends OpMode {
             robot.driveRightFront.setPower(frontRightPower);
             robot.driveRightBack.setPower(backRightPower);
         }
-        if (gamepad1.left_bumper && Button.TRANSFER.canPress(timestamp)){
+        if (gamepad1.left_bumper && Button.TRANSFER.canPress(timestamp)) {
             hSlideisOut = !hSlideisOut;
         }
-        if(gamepad1.y && Button.SLIGHT_DOWN.canPress(timestamp)){
-            if(latch){
+        if (gamepad1.y && Button.SLIGHT_DOWN.canPress(timestamp)) {
+            if (latch) {
                 robot.latch.setOut();
                 latch = false;
-            if(!latch){
-                robot.latch.setInit();
-                latch = true;
+                if (!latch) {
+                    robot.latch.setInit();
+                    latch = true;
+                }
             }
-        }
-            // Logic for bringing hslides back in
+        // Logic for bringing hslides back in
         if (!hlimitswitch.getState() && hSlideGoBottom) {
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.hslides.hslides.setPower(-1);
@@ -157,22 +160,32 @@ public class teleop2 extends OpMode {
 
         // Intake On and Off (in)
         if (gamepad1.right_trigger > 0.9 && Button.INTAKE.canPress(timestamp)) {//gamepad1.right_bumper && Button.INTAKE.canPress(timestamp)){
-            if (intakeMode == IntakeMode.OFF) {
+            if (intakeMode == teleop.IntakeMode.OFF||intakeMode == teleop.IntakeMode.OUT) {
                 robot.intake.in();
-                intakeMode = IntakeMode.IN;
+                intakeMode = teleop.IntakeMode.IN;
             } else{
                 robot.intake.off();
-                intakeMode = IntakeMode.OFF;
+                intakeMode = teleop.IntakeMode.OFF;
             }
         }
         if(gamepad1.left_trigger > 0.9 && Button.INTAKEOUT.canPress(timestamp)){//bumper && Button.INTAKEOUT.canPress(timestamp)){
-            if(intakeMode == IntakeMode.OFF) {
+            if(intakeMode == teleop.IntakeMode.OFF|| intakeMode == teleop.IntakeMode.IN) {
                 robot.intake.out();
-                intakeMode = IntakeMode.OUT;
+                intakeMode = teleop.IntakeMode.OUT;
             }
             else {
                 robot.intake.off();
-                intakeMode = IntakeMode.OFF;
+                intakeMode = teleop.IntakeMode.OFF;
+            }
+        }
+        if (gamepad2.a && Button.CLAW.canPress(timestamp)) {
+            if (!clawOpen) {
+                robot.claw.setOpen();
+                clawOpen = true;
+            }
+            if (clawOpen) {
+                robot.claw.setClose();
+                clawOpen = false;
             }
         }
         telemetry.addData("h limit switch: ", hlimitswitch.getState());
@@ -184,7 +197,8 @@ public class teleop2 extends OpMode {
         telemetry.addData("hslideOut", robot.hslides.slideIn());
         telemetry.addData("hslidePower", robot.hslides.getPower());
         telemetry.update();
-    }
-}
-}
 
+        }
+    }
+
+}

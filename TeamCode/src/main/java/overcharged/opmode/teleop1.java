@@ -121,6 +121,7 @@ public class teleop1 extends OpMode {
             RobotLog.ii(TAG_SL, "Going down");
         } else if (hlimitswitch.getState() && (hSlideGoBottom)) {
             robot.hslides.forceStop();
+            robot.hslides.setPower(0f);
             robot.hslides.hslides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hSlideGoBottom = false;
             hSlideisOut = false;
@@ -176,6 +177,7 @@ public class teleop1 extends OpMode {
             hSlideGoBottom = true;
         }
         telemetry.addData("h limit switch: ",   hlimitswitch.getState());
+        telemetry.addData("h go bottom: ",   hSlideGoBottom);
         telemetry.addData("hslide power:", robot.hslides.hslides.getPower());
         telemetry.addData("hslide pos: ", robot.hslides.hslides.getCurrentPosition());
         telemetry.addData("driveLF", robot.driveLeftFront.getCurrentPosition());

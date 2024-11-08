@@ -6,7 +6,6 @@
             <goBILDA5203SeriesMotor name="driveRB" port="2" />
             <goBILDA5202SeriesMotor name="vslidesL" port="0" />
             <goBILDA5202SeriesMotor name="vslidesR" port="1" />
-            <DigitalDevice name="hlimitswitch" port="2" />
             <DigitalDevice name="vlimitswitch" port="0" />
             <Servo name="hang" port="1" />
             <Servo name="clawSmallTilt" port="2" />
@@ -22,6 +21,7 @@
             <goBILDA5202SeriesMotor name="intake" port="1" />
             <SparkFunOTOS name="sensor_otos" port="0" bus="0"/>
             <Servo name="intakeTilt" port="5" />
+            <DigitalDevice name="hlimitswitch" port="0" />
             <Servo name="latch" port="4" />
 
         </LynxModule>

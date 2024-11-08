@@ -1,16 +1,15 @@
 package overcharged.components;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class clawSmallTilt {
     //public OcServo intakeTilt;
     public OcServo clawSmallTilt;
     public VoltageSensor intakeVolt;
-    public static final float INIT = 70f;//230f;
+    public static final float INIT = 0f;//230f;
     public static final float TRANSFER = 70f;//175f;
-    public static final float FLAT = 171f;//158f;
-    public static final float OUT = 224f;//52f;
+    public static final float SPEC = 117f;//158f;
+    public static final float BUCKET = 175f;//52f;
 
 
     public clawSmallTilt(HardwareMap hardwareMap) {
@@ -26,9 +25,9 @@ public class clawSmallTilt {
 
     public void setTransfer() { clawSmallTilt.setPosition(TRANSFER); }
 
-    public void setFlat() { clawSmallTilt.setPosition(FLAT); }
+    public void setFlat() { clawSmallTilt.setPosition(SPEC); }
 
-    public void setOut() { clawSmallTilt.setPosition(OUT); }
+    public void setOut() { clawSmallTilt.setPosition(BUCKET); }
 
     //public void getVoltage() { intakeVolt.getVoltage();}
 }
