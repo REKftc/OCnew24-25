@@ -6,10 +6,10 @@
             <goBILDA5203SeriesMotor name="driveRB" port="2" />
             <goBILDA5202SeriesMotor name="vslidesL" port="0" />
             <goBILDA5202SeriesMotor name="vslidesR" port="1" />
-            <DigitalDevice name="vlimitswitch" port="0" />
+            <DigitalDevice name="vlimitswitch" port="4" />
             <Servo name="hang" port="1" />
             <Servo name="clawSmallTilt" port="2" />
-            <Servo name="depoHslide" port="3" />
+            <Servo name="depoHslide" port="4" />
             <Servo name="clawBigTilt" port="5" />
             <Servo name="claw" port="4" />
 

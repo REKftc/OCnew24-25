@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
 import java.text.DecimalFormat;
+import java.util.List;
 
 import overcharged.components.RobotMecanum;
 
@@ -22,7 +23,14 @@ public class SwitchTest extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        digital = hardwareMap.get(DigitalChannel.class, "hlimitswitch");
+//        List<DigitalChannel> test = hardwareMap.getAll(DigitalChannel.class);
+//        for (DigitalChannel temp:test
+//             ) {
+//            telemetry.addData("value in list",temp.getState());
+//        }
+
+
+        digital = hardwareMap.get(DigitalChannel.class, "vlimitswitch");
         robot = new RobotMecanum(this, false, false);
       //  intakeTilt = new OcServo(hardwareMap, "intakeTilt", 100f);
         telemetry.addData(">>", "Press start to continue");

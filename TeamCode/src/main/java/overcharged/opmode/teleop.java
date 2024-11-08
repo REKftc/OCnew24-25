@@ -92,6 +92,7 @@ public class teleop extends OpMode {
             vlimitswitch = hardwareMap.get(DigitalChannel.class, "vlimitswitch");
             startTime = System.currentTimeMillis();
             robot.setBulkReadManual();
+
             //robot.vSlides.vSlidesB.setTargetPositionPIDFCoefficients(21,0,0,0);
         } catch (Exception e) {
             RobotLog.ee(TAG_T, "Teleop init failed: " + e.getMessage());
@@ -105,7 +106,8 @@ public class teleop extends OpMode {
             robot.intakeTilt.setInit();
             firstLoop = false;
             robot.latch.setInit();
-           // robot.hslides.in();
+            robot.hslides.in();
+            robot.vSlides.moveEncoderTo(robot.vSlides.START, 1);
         }
         robot.clearBulkCache();
         long timestamp = System.currentTimeMillis();
@@ -243,13 +245,13 @@ public class teleop extends OpMode {
 
         if(gamepad2.left_stick_y > 0.1 && !hlimitswitch.getState()) {
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            //robot.hslides.moveEncoderTo(robot.hslides.hslides.getCurrentPosition()-(int)gamepad2.left_stick_y / 2, 0.3f);
+            robot.hslides.moveEncoderTo(robot.hslides.hslides.getCurrentPosition()-(int)gamepad2.left_stick_y / 2, 0.3f);
             robot.hslides.hslides.setPower(-gamepad2.left_stick_y / 2);
         }
         if(gamepad2.left_stick_y < -0.1 && robot.hslides.hslides.getCurrentPosition() < 500){
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-            //robot.hslides.moveEncoderTo(robot.hslides.hslides.getCurrentPosition()-(int)gamepad2.left_stick_y / 2, 0.3f);
+            robot.hslides.moveEncoderTo(robot.hslides.hslides.getCurrentPosition()-(int)gamepad2.left_stick_y / 2, 0.3f);
             robot.hslides.hslides.setPower(-gamepad2.left_stick_y);
         }
         if(gamepad2.left_stick_y < -0.1 && robot.hslides.hslides.getCurrentPosition() < 500){
@@ -270,7 +272,7 @@ public class teleop extends OpMode {
         if (gamepad2.dpad_right && Button.WALL.canPress(timestamp)) {
             robot.claw.setOpen();
             clawOpen = true;
-        //    robot.vSlides.moveEncoderTo(robot.vSlides.wall, 1);
+            robot.vSlides.moveEncoderTo(robot.vSlides.wall, 1);
             slideHeight = SlideHeight.WALL;
             depoTiltDelay = System.currentTimeMillis(); // Delay depo so it doesnt hit anything
         }
@@ -283,7 +285,7 @@ public class teleop extends OpMode {
         // go to bar
 
         if (gamepad2.dpad_left && Button.BTN_MID.canPress(timestamp)) {
-         //   robot.vSlides.moveEncoderTo(robot.vSlides.mid, 1);
+            robot.vSlides.moveEncoderTo(robot.vSlides.mid, 1);
             slideHeight = SlideHeight.MID;
             depoTiltDelay = System.currentTimeMillis();
         }
@@ -297,9 +299,9 @@ public class teleop extends OpMode {
         // Bucket
 
         if (gamepad2.dpad_up && Button.HIGH1.canPress(timestamp)) {
-            // if(!(slideHeight == SlideHeight.HIGH1)) {
-            slideHeight = SlideHeight.HIGH1;
-            //robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1);
+            if(!(slideHeight == SlideHeight.HIGH1)) {
+                slideHeight = SlideHeight.HIGH1;}
+            robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1);
             robot.vSlides.setPower(1f);
             depoTiltDelay = System.currentTimeMillis();
         }
@@ -307,7 +309,7 @@ public class teleop extends OpMode {
 
         if(!(slideHeight == SlideHeight.HIGH2)) {
                 slideHeight = SlideHeight.HIGH2;
-               // robot.vSlides.moveEncoderTo(robot.vSlides.high2, 1);
+                robot.vSlides.moveEncoderTo(robot.vSlides.high2, 1);
                 robot.depoHslide.setInit();
                 robot.clawBigTilt.setPosition(robot.clawBigTilt.BUCKET);
             }
@@ -376,7 +378,7 @@ public class teleop extends OpMode {
 
 
         telemetry.addData("h limit switch: ",   hlimitswitch.getState());
-        //telemetry.addData("v limit switch: ",   vlimitswitch.getState());
+        telemetry.addData("v limit switch: ",   vlimitswitch.getState());
         telemetry.addData("vslideR:", robot.vSlides.vSlidesR.getPower());
         telemetry.addData("vslideL:", robot.vSlides.vSlidesL.getPower());
         telemetry.addData("power:", robot.hslides.hslides.getPower());
