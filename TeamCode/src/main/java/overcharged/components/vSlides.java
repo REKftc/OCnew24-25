@@ -47,12 +47,12 @@ public class vSlides {
 
         String missing = "";
         int numberMissing = 0;
-        OcMotorEx slideL = null;
-        OcSwitch lswitch2 = null;
+        OcMotorEx slideF = null;
+        OcSwitch vswitch = null;
         try {
-            lswitch2 = new OcSwitch(hardwareMap, "vlimitswitch", true);
+            vswitch = new OcSwitch(hardwareMap, "vlimitswitch", true);
             boolean isSwitchNull = vlimitswitch == null ? true : false;
-            switchs.add(lswitch2);
+            switchs.add(vswitch);
             RobotLog.ii(TAG_H, "limitSwitch(isNull)? " + isSwitchNull);
         } catch (Exception e) {
             RobotLog.ee(RobotConstants.TAG_R, "missing: limitSwitch " + e.getMessage());
@@ -61,7 +61,7 @@ public class vSlides {
             boolean isSwitchNull = vlimitswitch == null ? true : false;
             RobotLog.ii(TAG_H, "limitSwitch(catch)? " + isSwitchNull);
         }
-        this.vlimitswitch = lswitch2;
+        this.vlimitswitch = vswitch;
         start = vSlidesR.getCurrentPosition();
         start = vSlidesL.getCurrentPosition();
 
