@@ -46,6 +46,7 @@ public class teleop extends OpMode {
     long intakeTiltDelay;
     boolean intakeDelay = false;
     boolean hSlideGoBottom = false;
+    boolean depohSlideOut = false;
     boolean intakeOn = false;
     boolean clawOpen = true;
     boolean latch = false;
@@ -107,6 +108,7 @@ public class teleop extends OpMode {
             firstLoop = false;
             robot.latch.setInit();
             robot.hslides.in();
+            robot.depoHslide.setInit();
             robot.vSlides.moveEncoderTo(robot.vSlides.START, 1);
         }
         robot.clearBulkCache();
@@ -165,18 +167,28 @@ public class teleop extends OpMode {
                 intakeTransfer = true;
 
         }
-        /*
-        if (gamepad2.a && Button.BTN_HANG.canPress(timestamp)) {
-            if(!hangOut) {
-                robot.hang.setOut();
-                hangOut = true;
+
+        if (gamepad2.a && Button.CLAW.canPress(timestamp)) {
+            if(!clawOpen) {
+                robot.claw.setOpen();
+                clawOpen = true;
             }
-            else if(hangOut){
-                robot.hang.setInit();
-                hangOut = false;
+            else if(clawOpen){
+                robot.claw.setClose();
+                clawOpen = false;
             }
         }
-        */
+
+        if (gamepad2.b && Button.BTN_OUT.canPress(timestamp)) {
+            if(!depohSlideOut) {
+                robot.depoHslide.setOut();
+                depohSlideOut = true;
+            }
+            else if(depohSlideOut){
+                robot.depoHslide.setInit();
+                depohSlideOut = false;
+            }
+        }
 
         // Bring hSlides in
         if (!hlimitswitch.getState() && (hSlideGoBottom)) {// && robot.vSlides.getCurrentPosition() > robot.vSlides.start){//!robot.vSlides.slideReachedBottom()){
@@ -332,16 +344,6 @@ public class teleop extends OpMode {
             slideBottom();
         }
 
-        if (gamepad2.a && Button.CLAW.canPress(timestamp)) {
-            if(!clawOpen) {
-                robot.claw.setOpen();
-                clawOpen = true;
-            }
-            if(clawOpen){
-                robot.claw.setClose();
-                clawOpen = false;
-            }
-        }
         //slight down (pressing)
         if((gamepad1.left_bumper && slideHeight != SlideHeight.DOWN)){
             if(buttonState == ButtonState.NO2) {

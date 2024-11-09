@@ -144,8 +144,8 @@ Tester
 
                 new ServoTestInfo(
                         intakeTilt,
-                        robot.intakeTilt.TRANSFER,
-                        robot.intakeTilt.OUT),
+                        robot.intakeTilt.OUT,
+                        robot.intakeTilt.TRANSFER),
                 new ServoTestInfo(
                         hang,
                         robot.hang.INIT,
@@ -156,11 +156,11 @@ Tester
                         robot.latch.OUT),
                 new ServoTestInfo(
                         clawSmallTilt,
-                        robot.clawSmallTilt.INIT,
+                        robot.clawSmallTilt.TRANSFER,
                         robot.clawSmallTilt.BUCKET),
                 new ServoTestInfo(
                         clawBigTilt,
-                        robot.clawBigTilt.INIT,
+                        robot.clawBigTilt.TRANSFER,
                         robot.clawBigTilt.OUT),
 
         };
