@@ -26,7 +26,11 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 // Left Trigger - Outtake on/off
 // Right Bumper - Transfer positions
 // Left Bumper - hSlide toggle
+// y - force hslide back
 //
+/// Arm Driver
+// a - Claw Open/Close
+// x -
 
 
 @Config
@@ -45,12 +49,18 @@ public class teleop2 extends OpMode {
     boolean firstLoop = true;
     private DigitalChannel hlimitswitch;
     IntakeMode intakeMode = IntakeMode.OFF;
+    teleop2.SlideLength slideLength = teleop2.SlideLength.IN;
     boolean latch = true;
 
     public enum IntakeMode {
         IN,
         OUT,
         OFF;
+    }
+    public enum SlideLength {
+        IN,
+        MID,
+        LONG;
     }
 
     @Override
@@ -172,7 +182,14 @@ public class teleop2 extends OpMode {
             }
         }
 
-        /*
+        if(gamepad1.y && Button.TRANSFER.canPress(timestamp)){
+            robot.intakeTilt.setTransfer();
+            hSlideGoBottom = true;
+            slideLength = teleop2.SlideLength.IN;
+            intakeTransfer = true;
+        }
+
+        /* //TODO: latch
         if (gamepad2.a && Button.SLIGHT_DOWN.canPress(timestamp)) {
             if (latch) {
                 robot.latch.setOut();
@@ -184,23 +201,26 @@ public class teleop2 extends OpMode {
             }
         }*/
 
-        if (gamepad2.a && Button.CLAW.canPress(timestamp)) { // Claw
-            if (!clawOpen) {
+        if (gamepad2.a && Button.CLAW.canPress(timestamp)) {
+            if(!clawOpen) {
                 robot.claw.setOpen();
                 clawOpen = true;
             }
-            if (clawOpen) {
+            else if(clawOpen){
                 robot.claw.setClose();
                 clawOpen = false;
             }
         }
 
         if (gamepad2.x && Button.DEPOTILT.canPress(timestamp)) { // Depo to Bucket
+            robot.claw.setClose();
             robot.clawBigTilt.setBucket();
+            robot.depoHslide.setInit();
             robot.clawSmallTilt.setOut();
         }
 
-        if (gamepad2.b && Button.DEPOTILT.canPress(timestamp)) { // Depo to Bucket
+        if (gamepad2.b && Button.DEPOTILT.canPress(timestamp)) { // Depo to Specimen
+            robot.claw.setClose();
             robot.clawBigTilt.setOut();
             robot.depoHslide.setOut();
             robot.clawSmallTilt.setFlat();
@@ -212,6 +232,8 @@ public class teleop2 extends OpMode {
             robot.claw.setOpen();
             robot.clawSmallTilt.setTransfer();
         }
+
+
 
         telemetry.addData("h limit switch: ", hlimitswitch.getState());
         telemetry.addData("driveLF", robot.driveLeftFront.getCurrentPosition());
