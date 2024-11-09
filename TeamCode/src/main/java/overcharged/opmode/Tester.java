@@ -66,7 +66,8 @@ Tester
         SERVO,
         //GYRO,
         //LED,
-        SLIDE,
+        HSLIDE,
+        VSLIDE,
         SENSOR,
 
         ;
@@ -228,8 +229,12 @@ Tester
                     /*case LED:
                         ledTest();
                         break;*/
-                    case SLIDE:
-                        slideTest();
+                    case HSLIDE:
+                        hslideTest();
+                        break;
+
+                    case VSLIDE:
+                        vslideTest();
                         break;
                     /*case SENSOR:
                         sensorTest();
@@ -623,10 +628,9 @@ Tester
         idle();
     }
 
-    private void slideTest() {
+    private void hslideTest() {
         final int TIME = 1500;
         final OcMotorEx motors[] = new OcMotorEx[]{robot.hslides.hslides};
-
        // robot.vSlides.slideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
        // robot.vSlides.slideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         //robot.vSlides.slideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
@@ -667,6 +671,55 @@ Tester
 
         robot.hslides.hslides.setPower(0);
        // robot.vSlides.slideLeft.setPower(0);
+        //robot.vSlides.slideRight.setPower(0);
+        idle();
+    }
+
+    private void vslideTest() {
+        final int TIME = 1500;
+        final OcMotorEx motors[] = new OcMotorEx[]{robot.vSlides.vSlidesL, robot.vSlides.vSlidesR};
+
+        // robot.vSlides.slideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        // robot.vSlides.slideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        //robot.vSlides.slideLeft.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        //robot.vSlides.slideRight.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+        // i = 1, slide down until touching the switch and reset the encoder
+        // i = 2, slide up for 1.5 second and ignore the switch
+        // i = 3, slide down until touching the switch and reset the encoder
+        back:
+        for (OcMotorEx motor: motors) {
+            float slidePower = -0.45f;
+            for (int i = 1; i <= 3; i++) {
+                long startTime = System.currentTimeMillis();
+                long timeStamp = startTime;
+                while (opModeIsActive() && timeStamp - startTime < TIME) {
+                    motor.setPower(slidePower);
+
+                    if (gamepad1.left_stick_button && Button.BTN_BACK.canPress(timeStamp)) {
+                        break back;
+                    } else if (robot.vSlides.vlimitswitch.isTouch() && i != 2) {
+                        motor.resetPosition();
+                        break;
+                    }
+                    telemetry.addData("Test", "Slide");
+                    telemetry.addData("Back", "LeftStick");
+                    telemetry.addData(motor.toString() + " Position",
+                            integerFormatter.format(motor.getCurrentPosition()));
+                    telemetry.addData(motor.toString() + " Power",
+                            decimalFormatter.format(motor.getPower()));
+                    telemetry.update();
+                    idle();
+                    timeStamp = System.currentTimeMillis();
+                }
+                slidePower = -slidePower;
+                motor.setPower(0);
+            }
+        }
+
+        robot.vSlides.vSlidesL.setPower(0);
+        robot.vSlides.vSlidesR.setPower(0);
+        // robot.vSlides.slideLeft.setPower(0);
         //robot.vSlides.slideRight.setPower(0);
         idle();
     }

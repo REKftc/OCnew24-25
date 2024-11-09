@@ -102,9 +102,9 @@ public class vSlides {
         vSlidesL.setPower(-0.7f);
         vSlidesR.setPower(-0.7f);
     }
-    public void inAuto(){
-        vSlidesL.setPower(-0.9f);
-        vSlidesR.setPower(-0.9f);
+    public void up(){
+        vSlidesL.setPower(0.9f);
+        vSlidesR.setPower(0.9f);
     }
     public void setPowerBoth(float power){
         vSlidesL.setPower(power);
@@ -152,7 +152,7 @@ public class vSlides {
         motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motor.resetPosition();
     }
-    public float getPower() {
+    public float getPowerR() {
         return vSlidesR.getPower();
     }
 
