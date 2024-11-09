@@ -49,7 +49,8 @@ public class teleop2 extends OpMode {
     boolean firstLoop = true;
     private DigitalChannel hlimitswitch;
     IntakeMode intakeMode = IntakeMode.OFF;
-    teleop2.SlideLength slideLength = teleop2.SlideLength.IN;
+    SlideLength slideLength = SlideLength.IN;
+    ScoreType score = ScoreType.NONE;
     boolean latch = true;
 
     public enum IntakeMode {
@@ -61,6 +62,11 @@ public class teleop2 extends OpMode {
         IN,
         MID,
         LONG;
+    }
+    public enum ScoreType {
+        BUCKET,
+        SPECIMEN,
+        NONE
     }
 
     @Override
@@ -217,6 +223,7 @@ public class teleop2 extends OpMode {
             robot.clawBigTilt.setBucket();
             robot.depoHslide.setInit();
             robot.clawSmallTilt.setOut();
+            score = ScoreType.BUCKET;
         }
 
         if (gamepad2.b && Button.DEPOTILT.canPress(timestamp)) { // Depo to Specimen
@@ -224,6 +231,7 @@ public class teleop2 extends OpMode {
             robot.clawBigTilt.setOut();
             robot.depoHslide.setOut();
             robot.clawSmallTilt.setFlat();
+            score = ScoreType.SPECIMEN;
         }
 
         if (gamepad2.y && Button.DEPOTILT.canPress(timestamp)) { // Transfer
@@ -231,6 +239,24 @@ public class teleop2 extends OpMode {
             robot.clawBigTilt.setTransfer();
             robot.claw.setOpen();
             robot.clawSmallTilt.setTransfer();
+        }
+
+        if (gamepad2.right_bumper && Button.CLAW.canPress(timestamp)){ // scoring button
+            if(score == ScoreType.BUCKET){
+                robot.depoHslide.setInit();
+                robot.claw.setClose();
+                robot.clawBigTilt.setBucket();
+                robot.clawSmallTilt.setOut();
+                robot.claw.setOpen();
+            } else if (score == ScoreType.SPECIMEN) {
+                robot.claw.setClose();
+                robot.clawBigTilt.setOut();
+                robot.depoHslide.setOut();
+                robot.clawSmallTilt.setFlat();
+                robot.claw.setOpen();
+            } else {
+
+            }
         }
 
 
