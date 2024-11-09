@@ -26,6 +26,7 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 // Left Trigger - Outtake on/off
 // Right Bumper - Transfer positions
 // Left Bumper - hSlide toggle
+//
 
 
 @Config
@@ -125,16 +126,7 @@ public class teleop2 extends OpMode {
         if (gamepad1.left_bumper && Button.TRANSFER.canPress(timestamp)) {
             hSlideisOut = !hSlideisOut;
         }
-        if (gamepad1.y && Button.SLIGHT_DOWN.canPress(timestamp)) {
-            if (latch) {
-                robot.latch.setOut();
-                latch = false;
-                if (!latch) {
-                    robot.latch.setInit();
-                    latch = true;
-                }
-            }
-        }
+
         // Logic for bringing hslides back in
         if (!hlimitswitch.getState() && hSlideGoBottom) {
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -160,7 +152,7 @@ public class teleop2 extends OpMode {
         }
 
         // Intake On and Off (in)
-        if (gamepad2.right_trigger > 0.9 && Button.INTAKE.canPress(timestamp)) {//gamepad1.right_bumper && Button.INTAKE.canPress(timestamp)){
+        if (gamepad1.right_trigger > 0.9 && Button.INTAKE.canPress(timestamp)) {//gamepad1.right_bumper && Button.INTAKE.canPress(timestamp)){
             if (intakeMode == teleop2.IntakeMode.OFF||intakeMode == teleop2.IntakeMode.OUT) {
                 robot.intake.in();
                 intakeMode = teleop2.IntakeMode.IN;
@@ -169,7 +161,7 @@ public class teleop2 extends OpMode {
                 intakeMode = teleop2.IntakeMode.OFF;
             }
         }
-        if(gamepad2.left_trigger > 0.9 && Button.INTAKEOUT.canPress(timestamp)){//bumper && Button.INTAKEOUT.canPress(timestamp)){
+        if(gamepad1.left_trigger > 0.9 && Button.INTAKEOUT.canPress(timestamp)){//bumper && Button.INTAKEOUT.canPress(timestamp)){
             if(intakeMode == teleop2.IntakeMode.OFF|| intakeMode == teleop2.IntakeMode.IN) {
                 robot.intake.out();
                 intakeMode = teleop2.IntakeMode.OUT;
@@ -179,7 +171,20 @@ public class teleop2 extends OpMode {
                 intakeMode = teleop2.IntakeMode.OFF;
             }
         }
-        if (gamepad2.a && Button.CLAW.canPress(timestamp)) {
+
+        /*
+        if (gamepad2.a && Button.SLIGHT_DOWN.canPress(timestamp)) {
+            if (latch) {
+                robot.latch.setOut();
+                latch = false;
+                if (!latch) {
+                    robot.latch.setInit();
+                    latch = true;
+                }
+            }
+        }*/
+
+        if (gamepad2.a && Button.CLAW.canPress(timestamp)) { // Claw
             if (!clawOpen) {
                 robot.claw.setOpen();
                 clawOpen = true;
@@ -189,6 +194,25 @@ public class teleop2 extends OpMode {
                 clawOpen = false;
             }
         }
+
+        if (gamepad2.x && Button.DEPOTILT.canPress(timestamp)) { // Depo to Bucket
+            robot.clawBigTilt.setBucket();
+            robot.clawSmallTilt.setOut();
+        }
+
+        if (gamepad2.b && Button.DEPOTILT.canPress(timestamp)) { // Depo to Bucket
+            robot.clawBigTilt.setOut();
+            robot.depoHslide.setOut();
+            robot.clawSmallTilt.setFlat();
+        }
+
+        if (gamepad2.y && Button.DEPOTILT.canPress(timestamp)) { // Transfer
+            robot.depoHslide.setInit();
+            robot.clawBigTilt.setTransfer();
+            robot.claw.setOpen();
+            robot.clawSmallTilt.setTransfer();
+        }
+
         telemetry.addData("h limit switch: ", hlimitswitch.getState());
         telemetry.addData("driveLF", robot.driveLeftFront.getCurrentPosition());
         telemetry.addData("driveLB", robot.driveLeftBack.getCurrentPosition());

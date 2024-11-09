@@ -31,6 +31,9 @@ public class clawBigTilt {
     public void setFlat() { clawBigTilt.setPosition(FLAT); }
 
     public void setOut() { clawBigTilt.setPosition(OUT); }
+
+    public void setWall() { clawBigTilt.setPosition(WALL); }
+
     public void setBucket() { clawBigTilt.setPosition(BUCKET); }
 
     //public void getVoltage() { intakeVolt.getVoltage();}
