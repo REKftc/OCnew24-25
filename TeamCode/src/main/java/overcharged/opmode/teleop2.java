@@ -155,6 +155,7 @@ public class teleop2 extends OpMode {
         }
         if (gamepad1.left_bumper && Button.TRANSFER.canPress(timestamp)) {
             hSlideisOut = !hSlideisOut;
+            robot.latch.setOut();
         }
 
         // Logic for bringing hslides back in
@@ -164,6 +165,7 @@ public class teleop2 extends OpMode {
             RobotLog.ii(TAG_SL, "Going down");
         } else if (hlimitswitch.getState() && hSlideGoBottom) {
             robot.hslides.forceStop();
+            robot.latch.setInit();
             robot.hslides.hslides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hSlideGoBottom = false;
             hSlideisOut = false;
@@ -209,17 +211,17 @@ public class teleop2 extends OpMode {
             intakeTransfer = true;
         }
 
-        /* //TODO: latch
+        //TODO: latch
         if (gamepad2.a && Button.SLIGHT_DOWN.canPress(timestamp)) {
             if (latch) {
                 robot.latch.setOut();
                 latch = false;
-                if (!latch) {
-                    robot.latch.setInit();
-                    latch = true;
+            if (!latch) {
+                robot.latch.setInit();
+                latch = true;
                 }
             }
-        }*/
+        }
 
         if (gamepad2.a && Button.CLAW.canPress(timestamp)) {
             if(!clawOpen) {
