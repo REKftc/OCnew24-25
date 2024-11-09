@@ -30,11 +30,14 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 //
 /// Arm Driver
 // a - Claw Open/Close
-// x -
+// x - Bucket
+// b - Specimen
+// y - Transfer
+// Right Bumper - score
 
 
 @Config
-@TeleOp(name="teleop backup", group="Teleop")
+@TeleOp(name="teleop manual", group="Teleop")
 public class teleop2 extends OpMode {
     RobotMecanum robot;
     double slowPower = 1;
@@ -45,11 +48,14 @@ public class teleop2 extends OpMode {
     boolean intakeOn = false;
     boolean clawOpen = true;
     boolean hSlideisOut = false;
+    boolean slideGoBottom = false;
     boolean intakeTransfer = false;
     boolean firstLoop = true;
     private DigitalChannel hlimitswitch;
+    private DigitalChannel vlimitswitch;
     IntakeMode intakeMode = IntakeMode.OFF;
     SlideLength slideLength = SlideLength.IN;
+    SlideHeight slideHeight = SlideHeight.DOWN;
     ScoreType score = ScoreType.NONE;
     boolean latch = true;
 
@@ -63,6 +69,14 @@ public class teleop2 extends OpMode {
         MID,
         LONG;
     }
+    public enum SlideHeight {
+        DOWN,
+        WALL,
+        MID,
+        HIGH1,
+        HIGH2;
+    }
+
     public enum ScoreType {
         BUCKET,
         SPECIMEN,
@@ -259,6 +273,24 @@ public class teleop2 extends OpMode {
             }
         }
 
+        //TODO: theory vSlide code
+
+        if(gamepad2.dpad_up && Button.HIGH1.canPress(timestamp)){ //vSlides Up to Bucket
+            slideHeight = SlideHeight.HIGH1;
+            robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1);
+        }
+        if(gamepad2.dpad_right && Button.BTN_MID.canPress(timestamp)){
+            slideHeight = SlideHeight.MID;
+            robot.vSlides.moveEncoderTo(robot.vSlides.mid, 1);
+        }
+        if(gamepad2.dpad_left && Button.WALL.canPress(timestamp)){
+            slideHeight = SlideHeight.WALL;
+            robot.vSlides.moveEncoderTo(robot.vSlides.wall, 1);
+        }
+        if(gamepad2.dpad_down && Button.SLIDE_RESET.canPress(timestamp)) {
+            slideBottom();
+            slideGoBottom = true;
+        }
 
 
         telemetry.addData("h limit switch: ", hlimitswitch.getState());
@@ -270,5 +302,23 @@ public class teleop2 extends OpMode {
         telemetry.addData("hslideOut", robot.hslides.slideIn());
         telemetry.addData("hslidePower", robot.hslides.getPower());
         telemetry.update();
+    }
+
+    public void slideBottom() { //Slide bottom
+        if (!vlimitswitch.getState()) {
+            robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.vSlides.setPower(-1f);
+            RobotLog.ii(TAG_SL, "Going down");
+        } else {
+            robot.vSlides.setPower(0f);
+            robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            slideGoBottom = false;
+            robot.intake.in();
+            robot.claw.setOpen();
+            clawOpen = true;
+            RobotLog.ii(TAG_SL, "Force stopped");
+        }
     }
 }
