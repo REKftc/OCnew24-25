@@ -12,7 +12,6 @@
             <Servo name="depoHslide" port="0" />
             <Servo name="clawBigTilt" port="5" />
             <Servo name="claw" port="4" />
-            <Servo name="latch" port="3" />
 
 
         </LynxModule>
@@ -24,7 +23,7 @@
             <SparkFunOTOS name="sensor_otos" port="0" bus="0"/>
             <Servo name="intakeTilt" port="5" />
             <DigitalDevice name="hlimitswitch" port="0" />
-            <Servo name="latch" port="4" />
+            <Servo name="latch" port="3" />
 
         </LynxModule>
     </LynxUsbDevice>
