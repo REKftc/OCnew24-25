@@ -279,6 +279,7 @@ Tester
            // if (robot.vSlides.slideReachedBottom()) {
              //   robot.vSlides.vSlides.resetPosition();
             //}
+
             telemetry.addData("Test", "Encoders");
             telemetry.addData("Front",
                     "Left:" + integerFormatter.format(robot.driveLeftBack.getCurrentPosition()) +
@@ -290,6 +291,10 @@ Tester
              //       "vSlides:" + integerFormatter.format(robot.vSlides.vSlides.getCurrentPosition()));
             telemetry.addData("Slides:",
                     "hSlidesR:" + integerFormatter.format(robot.hslides.hslides.getCurrentPosition()));
+            telemetry.addData("Slides:",
+                    "vSlidesL:" + integerFormatter.format(robot.vSlides.vSlidesL.getCurrentPosition()));
+            telemetry.addData("Slides:",
+                    "vSlidesR:" + integerFormatter.format(robot.vSlides.vSlidesR.getCurrentPosition()));
             //telemetry.addData("Slides:",
               //      "hSlidesL:" + integerFormatter.format(robot.hslides.hslidesL.getCurrentPosition()));
             telemetry.addData("Reset", "Start");

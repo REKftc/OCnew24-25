@@ -9,12 +9,13 @@ public class claw {
     public static final float INIT = 180f;
     // public static final float TRANSFER = 70f;//175f;
     // public static final float SPEC = 171f;//158f;
-    public static final float CLOSE = 168f;//257f;//255f;
+    public static final float CLOSE = 170f;
+    public static final float HALF_CLOSE = 194f;//257f;//255f;
     public static final float OPEN = 215f;
 
 
     public claw(HardwareMap hardwareMap) {
-        claw = new OcServo(hardwareMap, "claw", INIT);
+        claw = new OcServo(hardwareMap, "claw", OPEN);
         //intakeTilt = hardwareMap.get(OcServo.class, "intakeTilt");
         //intakeVolt = hardwareMap.voltageSensor.iterator().next();
     }
