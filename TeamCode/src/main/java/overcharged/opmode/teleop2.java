@@ -44,6 +44,7 @@ public class teleop2 extends OpMode {
     long startTime;
     boolean hSlideGoBottom = false;
     long intakeTiltDelay;
+    long transferDelay;
     boolean intakeDelay = false;
     boolean intakeOn = false;
     boolean clawOpen = true;
@@ -91,6 +92,7 @@ public class teleop2 extends OpMode {
             robot = new RobotMecanum(this, false, false);
             startTime = System.currentTimeMillis();
             hlimitswitch = hardwareMap.get(DigitalChannel.class, "hlimitswitch");
+            vlimitswitch = hardwareMap.get(DigitalChannel.class, "vlimitswitch");
             robot.setBulkReadManual();
             //robot.vSlides.vSlidesB.setTargetPositionPIDFCoefficients(21,0,0,0);
         } catch (Exception e) {
@@ -106,7 +108,7 @@ public class teleop2 extends OpMode {
         if (firstLoop) {
             robot.intakeTilt.setInit();
             firstLoop = false;
-            robot.hslides.in();
+            //robot.hslides.in();
         }
         // Clear bulk cache
         robot.clearBulkCache();
@@ -141,6 +143,11 @@ public class teleop2 extends OpMode {
             robot.driveLeftBack.setPower(backLeftPower);
             robot.driveRightFront.setPower(frontRightPower);
             robot.driveRightBack.setPower(backRightPower);
+            if (hlimitswitch.getState()) {
+                hSlideGoBottom = true;
+                hSlideisOut = false;
+            }
+
         } else {
             // Regular robot movement control when left bumper is not pressed
             double frontLeftPower = ((y + x + rx) / denominator) * slowPower;
@@ -153,7 +160,7 @@ public class teleop2 extends OpMode {
             robot.driveRightFront.setPower(frontRightPower);
             robot.driveRightBack.setPower(backRightPower);
         }
-        if (gamepad1.left_bumper && Button.TRANSFER.canPress(timestamp)) {
+        if (gamepad1.left_bumper && Button.TRANSFER.canPress(timestamp)) { // hSlide mode
             hSlideisOut = !hSlideisOut;
             robot.latch.setOut();
         }
@@ -164,13 +171,15 @@ public class teleop2 extends OpMode {
             robot.hslides.hslides.setPower(-1);
             RobotLog.ii(TAG_SL, "Going down");
         } else if (hlimitswitch.getState() && hSlideGoBottom) {
-            robot.hslides.forceStop();
+            //robot.hslides.forceStop();
             robot.latch.setInit();
+            robot.hslides.hslides.setPower(0);
             robot.hslides.hslides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hSlideGoBottom = false;
             hSlideisOut = false;
             RobotLog.ii(TAG_SL, "Force stopped");
         }
+
 
         // Change intake tilt
         if (gamepad1.right_bumper && Button.TRANSFER.canPress(timestamp)) {//bumper && Button.INTAKEOUT.canPress(timestamp)){

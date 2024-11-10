@@ -9,8 +9,8 @@ public class claw {
     public static final float INIT = 244f;
     // public static final float TRANSFER = 70f;//175f;
     // public static final float SPEC = 171f;//158f;
-    public static final float CLOSE = 260f;//257f;//255f;
-    public static final float OPEN = 198f;
+    public static final float CLOSE = 210f;//257f;//255f;
+    public static final float OPEN = 254f;
 
 
     public claw(HardwareMap hardwareMap) {
