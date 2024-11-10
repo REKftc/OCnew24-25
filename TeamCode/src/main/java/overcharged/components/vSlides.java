@@ -4,6 +4,7 @@ import static overcharged.config.RobotConstants.TAG_H;
 import static overcharged.config.RobotConstants.TAG_SL;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.RobotLog;
 
@@ -16,7 +17,7 @@ public class vSlides {
 
     public final OcMotorEx vSlidesL;
     public final OcMotorEx vSlidesR;
-    public OcSwitch vlimitswitch;
+    public OcSwitch switchSlideDown;
     public final List<OcSwitch> switchs = new ArrayList<>();
 
     public double start;
@@ -28,7 +29,7 @@ public class vSlides {
     public static final int OUT = 1000;
     public static final int wall = 300;
     public static final int mid = 400;
-    public static final int high1 = 600;
+    public static final int high1 = 1100;
     public static final int high2 = 800;
     public static double p = 18;
     public static double i = 0;
@@ -37,8 +38,7 @@ public class vSlides {
 
     public vSlides(HardwareMap hardwareMap) {
 
-
-        vSlidesR = new OcMotorEx(hardwareMap, "vslidesR", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlidesR = new OcMotorEx(hardwareMap, "vslidesR", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_USING_ENCODER);
         vSlidesL = new OcMotorEx(hardwareMap, "vslidesL", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
         vSlidesR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         vSlidesL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -50,18 +50,18 @@ public class vSlides {
         OcMotorEx slideF = null;
         OcSwitch vswitch = null;
         try {
-            vswitch = new OcSwitch(hardwareMap, "vlimitswitch", true);
-            boolean isSwitchNull = vlimitswitch == null ? true : false;
+            vswitch = new OcSwitch(hardwareMap,"vlimitswitch", true);
+            boolean isSwitchNull= switchSlideDown==null ? true : false;
             switchs.add(vswitch);
             RobotLog.ii(TAG_H, "limitSwitch(isNull)? " + isSwitchNull);
         } catch (Exception e) {
-            RobotLog.ee(RobotConstants.TAG_R, "missing: limitSwitch " + e.getMessage());
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: limitSwitch " + e.getMessage());
             missing = missing + ", vlimitswitch";
             numberMissing++;
-            boolean isSwitchNull = vlimitswitch == null ? true : false;
+            boolean isSwitchNull= switchSlideDown==null ? true : false;
             RobotLog.ii(TAG_H, "limitSwitch(catch)? " + isSwitchNull);
         }
-        this.vlimitswitch = vswitch;
+        this.switchSlideDown = vswitch;
         start = vSlidesR.getCurrentPosition();
         start = vSlidesL.getCurrentPosition();
 
@@ -94,8 +94,8 @@ public class vSlides {
 
 
 
-    public boolean slideIn() {
-        return vlimitswitch.isTouch() && vSlidesR.getCurrentPosition() <= start;
+    public boolean slideDown() {
+        return switchSlideDown.isTouch() && vSlidesR.getCurrentPosition() <= start;
     }
 
     public void down(){
@@ -127,7 +127,7 @@ public class vSlides {
         //try {
         if (vSlidesR != null) {
             RobotLog.ii(TAG_SL, "Set slide left motor power to " + power);
-            vSlidesR.setPower(power);
+            vSlidesR.setPower(getPowerR());
             if (power == 0f) {
                 vSlidesR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
@@ -137,7 +137,7 @@ public class vSlides {
         cnt = 2;
         if (vSlidesL != null) {
             RobotLog.ii(TAG_SL, "Set slide right motor power to " + power);
-            vSlidesL.setPower(power);
+            vSlidesL.setPower(getPowerL());
             if (power == 0f) {
                 vSlidesL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             }
@@ -168,3 +168,95 @@ public class vSlides {
         vSlidesL.setPower(0f);
     }
 }
+
+/*public class vSlides {
+
+    public OcMotorEx vSlidesF;
+    public OcMotorEx vSlides;
+    public OcSwitch switchSlideDown;
+    public final List<OcSwitch> switchs = new ArrayList<>();
+
+    public double start;
+
+    public static int autoLevel = 0;
+
+    public static final int START = 0;
+    public static final int PRESET1 = 142;
+    public static final int OUT = 1000;
+    public static final int wall = 300;
+    public static final int mid = 400;
+    public static final int high1 = 600;
+    public static final int high2 = 800;
+    public static double p = 18;
+    public static double i = 0;
+    public static double d = 0;
+    public static double f = 0;
+
+    public vSlides(HardwareMap hardwareMap){
+        vSlides = new OcMotorEx(hardwareMap, "vslidesR", DcMotor.Direction.REVERSE, DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlides = new OcMotorEx(hardwareMap, "vslidesL", DcMotor.Direction.FORWARD, DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlides.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        vSlides.setTargetPositionPIDFCoefficients(p, i, d, f);
+
+        String missing = "";
+        int numberMissing = 0;
+        OcMotorEx slideL = null;
+        OcMotorEx slideR = null;
+        OcSwitch vswitch = null;
+        try {
+            vswitch = new OcSwitch(hardwareMap,"vlimitswitch", true);
+            boolean isSwitchNull= switchSlideDown==null ? true : false;
+            switchs.add(vswitch);
+            RobotLog.ii(TAG_H, "limitSwitch(isNull)? " + isSwitchNull);
+        } catch (Exception e) {
+            RobotLog.ee(RobotConstants.TAG_R,  "missing: limitSwitch " + e.getMessage());
+            missing = missing + ", vlimitswitch";
+            numberMissing++;
+            boolean isSwitchNull= switchSlideDown==null ? true : false;
+            RobotLog.ii(TAG_H, "limitSwitch(catch)? " + isSwitchNull);
+        }
+        this.switchSlideDown = vswitch;
+        start = vSlides.getCurrentPosition();
+
+        RobotLog.ii(TAG_SL, "Initialized the Slide component numberMissing=" + numberMissing + " missing=" + missing);
+    }
+
+    public void up(){
+        vSlides.setPower(1);
+    }
+
+    public void off(){
+        vSlides.setPower(0);
+    }
+
+    public void down(){
+        vSlides.setPower(-1f);
+    }
+
+    public void moveEncoderTo(int pos, float power){
+        vSlides.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        vSlides.setTargetPosition(pos);
+        vSlides.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        vSlides.setPower(1);
+    }
+
+    public boolean slideReachedBottom() {
+        if (switchSlideDown.isDisabled()) return vSlides.getCurrentPosition() <= start;
+        return switchSlideDown.isTouch();
+    }
+    public void setPower(float power){
+        vSlides.setPower(power);}
+
+    public void reset(OcMotorEx motor) {
+        motor.setPower(0f);
+        motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motor.resetPosition();
+    }
+
+    public void forceStop() {
+        //if (prev_state != State.STOP) {
+        RobotLog.ii(TAG_SL, "Force stop the Slide component");
+        setPower(0f);
+    }
+}*/
+

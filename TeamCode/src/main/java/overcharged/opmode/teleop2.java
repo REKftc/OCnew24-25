@@ -49,7 +49,7 @@ public class teleop2 extends OpMode {
     boolean intakeOn = false;
     boolean clawOpen = true;
     boolean hSlideisOut = false;
-    boolean slideGoBottom = false;
+    boolean vslideGoBottom = false;
     boolean intakeTransfer = false;
     boolean firstLoop = true;
     private DigitalChannel hlimitswitch;
@@ -264,6 +264,7 @@ public class teleop2 extends OpMode {
             robot.clawBigTilt.setTransfer();
             robot.claw.setOpen();
             robot.clawSmallTilt.setTransfer();
+            robot.intakeTilt.setTransfer();
         }
 
         if (gamepad2.right_bumper && Button.CLAW.canPress(timestamp)){ // scoring button
@@ -288,19 +289,19 @@ public class teleop2 extends OpMode {
 
         if(gamepad2.dpad_up && Button.HIGH1.canPress(timestamp)){ //vSlides Up to Bucket
             slideHeight = SlideHeight.HIGH1;
-            robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1);
+            robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1f);
         }
         if(gamepad2.dpad_right && Button.BTN_MID.canPress(timestamp)){
             slideHeight = SlideHeight.MID;
-            robot.vSlides.moveEncoderTo(robot.vSlides.mid, 1);
+            robot.vSlides.moveEncoderTo(robot.vSlides.mid, 1f);
         }
         if(gamepad2.dpad_left && Button.WALL.canPress(timestamp)){
             slideHeight = SlideHeight.WALL;
-            robot.vSlides.moveEncoderTo(robot.vSlides.wall, 1);
+            robot.vSlides.moveEncoderTo(robot.vSlides.wall, 1f);
         }
         if(gamepad2.dpad_down && Button.SLIDE_RESET.canPress(timestamp)) {
             slideBottom();
-            slideGoBottom = true;
+            vslideGoBottom = true;
         }
 
 
@@ -316,7 +317,23 @@ public class teleop2 extends OpMode {
     }
 
     public void slideBottom() { //Slide bottom
-        if (!vlimitswitch.getState()) {
+
+        if (vlimitswitch.getState() && vslideGoBottom) {
+            robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.vSlides.vSlidesR.setPower(-1);
+            robot.vSlides.vSlidesL.setPower(-1);
+            RobotLog.ii(TAG_SL, "Going down");
+        } else if (!vlimitswitch.getState() && vslideGoBottom) {
+            //robot.hslides.forceStop();
+            robot.vSlides.vSlidesR.setPower(0);
+            robot.vSlides.vSlidesL.setPower(0);
+            robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            vslideGoBottom = true;
+            RobotLog.ii(TAG_SL, "Force stopped");
+        }
+       /* if (vlimitswitch.getState()) {
             robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.vSlides.setPower(-1f);
@@ -330,6 +347,6 @@ public class teleop2 extends OpMode {
             robot.claw.setOpen();
             clawOpen = true;
             RobotLog.ii(TAG_SL, "Force stopped");
-        }
+        }*/
     }
 }

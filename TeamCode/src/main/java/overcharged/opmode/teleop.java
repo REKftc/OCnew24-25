@@ -397,8 +397,8 @@ public class teleop extends OpMode {
 
         telemetry.addData("h limit switch: ",   hlimitswitch.getState());
         telemetry.addData("v limit switch: ",   vlimitswitch.getState());
-        telemetry.addData("vslideRPower:", robot.vSlides.vSlidesR.getPower());
-        telemetry.addData("vslideLPower:", robot.vSlides.vSlidesL.getPower());
+        telemetry.addData("vslideRPower:", robot.vSlides.vSlidesL.getPower());
+        telemetry.addData("vslideLPower:", robot.vSlides.vSlidesR.getPower());
         telemetry.addData("vslideLencoder: ", robot.vSlides.vSlidesL.getCurrentPosition());
         telemetry.addData("vslideRencoder: ", robot.vSlides.vSlidesR.getCurrentPosition());
         telemetry.addData("power:", robot.hslides.hslides.getPower());
@@ -415,8 +415,8 @@ public class teleop extends OpMode {
     }
     public void slideBottom() {
         if (vlimitswitch.getState()) {
-            robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robot.vSlides.setPower(-1f);
             RobotLog.ii(TAG_SL, "Going down");
         } else {

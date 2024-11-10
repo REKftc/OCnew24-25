@@ -146,7 +146,7 @@ Tester
                 new ServoTestInfo(
                         intakeTilt,
                         robot.intakeTilt.OUT,
-                        robot.intakeTilt.TRANSFER),
+                        robot.intakeTilt.INIT),
                 new ServoTestInfo(
                         hang,
                         robot.hang.INIT,
@@ -676,8 +676,8 @@ Tester
     }
 
     private void vslideTest() {
-        final int TIME = 1500;
-        final OcMotorEx motors[] = new OcMotorEx[]{robot.vSlides.vSlidesL, robot.vSlides.vSlidesR};
+        final int TIME = 7000;
+        final OcMotorEx motors[] = new OcMotorEx[]{robot.vSlides.vSlidesR, robot.vSlides.vSlidesL};
 
         // robot.vSlides.slideLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         // robot.vSlides.slideRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -698,7 +698,7 @@ Tester
 
                     if (gamepad1.left_stick_button && Button.BTN_BACK.canPress(timeStamp)) {
                         break back;
-                    } else if (robot.vSlides.vlimitswitch.isTouch() && i != 2) {
+                    } else if (robot.vSlides.switchSlideDown.isTouch() && i != 2) {
                         motor.resetPosition();
                         break;
                     }
@@ -717,9 +717,9 @@ Tester
             }
         }
 
-        robot.vSlides.vSlidesL.setPower(0);
         robot.vSlides.vSlidesR.setPower(0);
-        // robot.vSlides.slideLeft.setPower(0);
+        robot.vSlides.vSlidesL.setPower(0);
+        //robot.vSlides.slideLeft.setPower(0);
         //robot.vSlides.slideRight.setPower(0);
         idle();
     }
