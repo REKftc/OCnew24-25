@@ -12,7 +12,7 @@ public class clawBigTilt {
     public static final float FLAT = 196f;//107f;//158f;
     public static final float OUT = 179f;//51f;//52f;
     public static final float WALL = 42f;//52f;
-    public static final float BUCKET = 82f;
+    public static final float BUCKET = 63f;
 
 
     public clawBigTilt(HardwareMap hardwareMap) {

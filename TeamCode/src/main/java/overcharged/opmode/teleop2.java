@@ -20,20 +20,30 @@ import overcharged.components.RobotMecanum;
 import overcharged.pedroPathing.follower.Follower;
 import overcharged.pedroPathing.pathGeneration.Vector;
 
-// BUTTON MAP
-/// Base Driver
+///////// BUTTON MAP
+///// Base Driver
+/// Intake
 // Right Trigger - Intake on/off
 // Left Trigger - Outtake on/off
-// Right Bumper - Transfer positions
+/// hSlides
 // Left Bumper - hSlide toggle
 // y - force hslide back
+/// Others
+// Right Bumper - Transfer positions
 //
-/// Arm Driver
+///// Arm Driver
+///Others
 // a - Claw Open/Close
+// Right Bumper - score
+/// Depo arm locations
 // x - Bucket
 // b - Specimen
 // y - Transfer
-// Right Bumper - score
+/// vSlide controls
+// dpad Up - Slides to bucket
+// dpad Right - slides to specimen
+// dpad Left - slides to wall
+// dpad down - reset slides
 
 
 @Config
@@ -188,6 +198,8 @@ public class teleop2 extends OpMode {
                 intakeTransfer = true;
             } else {
                 robot.intakeTilt.setOut();
+                robot.claw.setOpen();
+                clawOpen=true;
                 intakeTransfer = false;
             }
         }
