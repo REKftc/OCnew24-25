@@ -7,10 +7,10 @@ public class clawSmallTilt {
     public OcServo clawSmallTilt;
     public VoltageSensor intakeVolt;
     public static final float INIT = 190f;//230f;
-    public static final float TRANSFER = 128f;//188f;//183f;//177f;//171f;//175f;
-    public static final float SPEC = 159f;//140f;//117f;//158f;
-    public static final float BUCKET = 166f;//175f;//52f;
-    public static final float WALL = 149f;
+    public static final float TRANSFER = 136f;//188f;//183f;//177f;//171f;//175f;
+    public static final float SPEC = 147f;//140f;//117f;//158f;
+    public static final float BUCKET = 145f;//175f;//52f;
+    public static final float WALL = 137f;
     public static final float MOVE_TO_WALL = 97f;
 
     public clawSmallTilt(HardwareMap hardwareMap) {

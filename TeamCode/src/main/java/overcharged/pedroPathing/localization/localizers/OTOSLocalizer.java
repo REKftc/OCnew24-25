@@ -1,6 +1,6 @@
 package overcharged.pedroPathing.localization.localizers;
 
-import com.acmerobotics.roadrunner.ftc.SparkFunOTOSCorrected;
+import overcharged.pedroPathing.localization.SparkFunOTOSCorrected;
 import com.qualcomm.hardware.sparkfun.SparkFunOTOS;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
@@ -41,7 +41,7 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 public class OTOSLocalizer extends Localizer {
     private HardwareMap hardwareMap;
     private Pose startPose;
-    private SparkFunOTOS otos;
+    private SparkFunOTOSCorrected otos;
     private SparkFunOTOS.Pose2D otosPose;
     private SparkFunOTOS.Pose2D otosVel;
     private SparkFunOTOS.Pose2D otosAcc;
@@ -83,11 +83,11 @@ public class OTOSLocalizer extends Localizer {
         // For the OTOS, left/right is the y axis and forward/backward is the x axis, with left being
         // positive y and forward being positive x. PI/2 radians is facing forward, and clockwise
         // rotation is negative rotation.
-        otos.setOffset(new SparkFunOTOS.Pose2D(0,-5.7,0));
+        otos.setOffset(new SparkFunOTOS.Pose2D(-5.5,0,0));
 
         // TODO: replace these with your tuned multipliers
-        otos.setAngularScalar(1.017013);
-        otos.setLinearScalar(1);
+        otos.setAngularScalar(0.98);
+        otos.setLinearScalar(1.3093);
 
         otos.calibrateImu();
         otos.resetTracking();
