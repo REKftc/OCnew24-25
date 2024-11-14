@@ -6,12 +6,12 @@ public class claw {
     //public OcServo intakeTilt;
     public OcServo claw;
     //public VoltageSensor intakeVolt;
-    public static final float INIT = 180f;
+    public static final float INIT = 140f;
     // public static final float TRANSFER = 70f;//175f;
     // public static final float SPEC = 171f;//158f;
-    public static final float CLOSE = 170f;
-    public static final float HALF_CLOSE = 194f;//257f;//255f;
-    public static final float OPEN = 215f;
+    public static final float CLOSE = 105f;
+    public static final float HALF_CLOSE = 109f;//257f;//255f;
+    public static final float OPEN = 140f;
 
 
     public claw(HardwareMap hardwareMap) {

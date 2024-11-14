@@ -136,7 +136,7 @@ public class teleop4 extends OpMode {
 
 
         if (vslideOut){
-            slowPower = 0.5;
+            slowPower = 0.6;
         } else{
             slowPower = 1;
         }
@@ -181,7 +181,7 @@ public class teleop4 extends OpMode {
             robot.driveRightFront.setPower(frontRightPower);
             robot.driveRightBack.setPower(backRightPower);
         }
-        if (gamepad1.left_stick_button && Button.TRANSFER.canPress(timestamp)) { // hSlide mode
+        if (gamepad1.left_bumper && Button.TRANSFER.canPress(timestamp)) { // hSlide mode
             hSlideisOut = !hSlideisOut;
             robot.latch.setOut();
         }
@@ -346,7 +346,7 @@ public class teleop4 extends OpMode {
             depoDelay = System.currentTimeMillis();
         }
 
-        if(gamepad2.dpad_right && Button.BTN_MID.canPress(timestamp)){ // Specimen
+        if(gamepad2.dpad_left && Button.BTN_MID.canPress(timestamp)){ // Specimen
             slideHeight = SlideHeight.MID;
             vslideOut = true;
             dDelay = true;
@@ -354,21 +354,23 @@ public class teleop4 extends OpMode {
             depoDelay = System.currentTimeMillis();
         }
         // Pick up from wall sequence
-        if(gamepad2.dpad_left && Button.WALL.canPress(timestamp)) {
+        if(gamepad2.dpad_right && Button.WALL.canPress(timestamp)) {
             slideHeight = SlideHeight.DOWN;
-            wallStep = 0;
-            robot.intakeTilt.setPosition(robot.intakeTilt.MOVE_TO_WALL);
-
-            robot.claw.setPosition(robot.claw.HALF_CLOSE);
-            robot.clawSmallTilt.setPosition(robot.clawSmallTilt.MOVE_TO_WALL);
-            depoDelay = System.currentTimeMillis();
-            wallStep++;
             vslideOut = true;
+            wallStep = 0;
+            robot.clawSmallTilt.setPosition(robot.clawSmallTilt.MOVE_TO_WALL);
+            //robot.claw.setPosition(robot.claw.HALF_CLOSE);
+            depoDelay = System.currentTimeMillis();
+            //waitFor(1000);
+            wallStep++;
 
            // depoDelay = System.currentTimeMillis();
             //wallStep++;
         }
         if(wallStep==1 && System.currentTimeMillis() - depoDelay > 250){
+            robot.intakeTilt.setFlat();
+            robot.clawBigTilt.setFlat();
+            robot.clawSmallTilt.setTranSeq();
             robot.clawBigTilt.setPosition(robot.clawBigTilt.WALL);
             robot.depoHslide.setInit();
 
@@ -377,20 +379,35 @@ public class teleop4 extends OpMode {
         }
         if(wallStep==2 && System.currentTimeMillis() - depoDelay > 500){
             robot.clawSmallTilt.setPosition(robot.clawSmallTilt.WALL);
+            robot.claw.setClose();
+            clawOpen = false;
+            depoDelay = 0;
+            depoDelay = System.currentTimeMillis();
+            wallStep++;
+        }
+        if(wallStep==3 && System.currentTimeMillis() - depoDelay > 350){
             robot.claw.setOpen();
             clawOpen = true;
             wallStep=0;
             depoDelay = 0;
         }
+
+
         if(gamepad2.dpad_down && Button.SLIDE_RESET.canPress(timestamp)) { // Slide reset
             slideHeight = SlideHeight.DOWN;
-            robot.depoHslide.setInit();
-            robot.clawSmallTilt.setTransfer();
-            robot.clawBigTilt.setTransfer();
-            robot.claw.setOpen();
             clawOpen = true;
             vslideGoBottom = true;
             vslideOut = false;
+            robot.depoHslide.setInit();
+            robot.intakeTilt.setFlat();
+            robot.clawBigTilt.setFlat();
+            robot.clawSmallTilt.setTranSeq();
+            waitFor(400);
+            robot.clawSmallTilt.setTransfer();
+            robot.clawBigTilt.setTransfer();
+            robot.claw.setOpen();
+            waitFor(400);
+            robot.intakeTilt.setTransfer();
         }
         if(vslideGoBottom){
             slideBottom();
@@ -431,6 +448,12 @@ public class teleop4 extends OpMode {
             robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             vslideGoBottom = false;
             RobotLog.ii(TAG_SL, "Force stopped");
+        }
+    }
+    public static void waitFor(int milliseconds) {
+        long startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < milliseconds) {
+            // loop
         }
     }
 }
