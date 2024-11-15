@@ -53,12 +53,15 @@ public class teleop4 extends OpMode {
     long depoDelay;
     long clawDelay;
     long transferDelay;
+    long intakeStop;
     int wallStep = 0;
     boolean intakeDelay = false;
     boolean intakeOn = false;
     boolean cDelay = false;
+    boolean intDelay = false;
     boolean clawOpen = true;
     boolean hSlideisOut = false;
+    boolean latched = true;
     boolean vslideGoBottom = false;
     boolean vslideOut = false;
     boolean intakeTransfer = false;
@@ -86,6 +89,7 @@ public class teleop4 extends OpMode {
         DOWN,
         WALL,
         MID,
+        LOWER,
         HIGH1,
         HIGH2;
     }
@@ -184,22 +188,28 @@ public class teleop4 extends OpMode {
         if (gamepad1.left_bumper && Button.TRANSFER.canPress(timestamp)) { // hSlide mode
             hSlideisOut = !hSlideisOut;
             robot.latch.setOut();
+            latched = !latched;
         }
 
         // Logic for bringing hslides back in
         if (!hlimitswitch.getState() && hSlideGoBottom) {
+            robot.latch.setInit();
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             robot.hslides.hslides.setPower(-1);
+            robot.clawBigTilt.setFlat();
+            robot.clawSmallTilt.setTranSeq();
+            robot.intakeTilt.setFlat();
             RobotLog.ii(TAG_SL, "Going down");
         } else if (hlimitswitch.getState() && hSlideGoBottom) {
             //robot.hslides.forceStop();
             robot.latch.setInit();
+            latched = true;
             robot.hslides.hslides.setPower(0);
             robot.hslides.hslides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            hSlideGoBottom = false;
             hSlideisOut = false;
             clawDelay = System.currentTimeMillis();
             cDelay = true;
+            hSlideGoBottom = false;
             RobotLog.ii(TAG_SL, "Force stopped");
         }
 
@@ -209,10 +219,16 @@ public class teleop4 extends OpMode {
             if (!intakeTransfer) {
                 robot.intakeTilt.setTransfer();
                 intakeTransfer = true;
-                if(hlimitswitch.getState()) {
+                if(hlimitswitch.getState() && latched) {
                     clawDelay = System.currentTimeMillis();
                     cDelay = true;
                 }
+                waitFor(350);
+                robot.intake.out();
+                intakeMode = IntakeMode.OUT;
+                waitFor(400);
+                robot.intake.in();
+                intakeMode = IntakeMode.IN;
             } else {
                 robot.intakeTilt.setOut();
                 intakeTransfer = false;
@@ -251,10 +267,18 @@ public class teleop4 extends OpMode {
 
         }
         if(intakeTransfer && cDelay && System.currentTimeMillis()- clawDelay>500){
+            robot.clawBigTilt.setTransfer();
+            robot.clawSmallTilt.setTransfer();
+            robot.intakeTilt.setTransfer();
+            waitFor(150);
             clawOpen = false;
             robot.claw.setClose();
             cDelay = false;
+            robot.intake.off();
+            intakeMode = IntakeMode.OFF;
         }
+
+
         //TODO: latch
         /*
         if (gamepad2.x && Button.SLIGHT_DOWN.canPress(timestamp)) {
@@ -280,7 +304,7 @@ public class teleop4 extends OpMode {
             }
         }
 
-        if (slideHeight == SlideHeight.HIGH1 && System.currentTimeMillis()-depoDelay>750 &dDelay) { // Depo to Bucket
+        if (slideHeight == SlideHeight.HIGH1 && System.currentTimeMillis()-depoDelay>750 &dDelay || slideHeight == SlideHeight.LOWER && System.currentTimeMillis()-depoDelay>550 &dDelay) { // Depo to Bucket
             //robot.claw.setClose();
             //clawOpen = false;
             robot.clawBigTilt.setBucket();
@@ -308,6 +332,15 @@ public class teleop4 extends OpMode {
             vslideOut = false;
             robot.clawSmallTilt.setTransfer();
             robot.intakeTilt.setTransfer();
+        }
+
+        if (gamepad2.left_bumper && Button.BTN_LEVEL2.canPress(timestamp)){
+            slideHeight = SlideHeight.LOWER;
+
+            robot.vSlides.moveEncoderTo(robot.vSlides.lower, 1f);
+            vslideOut = true;
+            dDelay = true;
+            depoDelay = System.currentTimeMillis();
         }
 
         if (gamepad2.right_trigger > 0.9 && Button.CLAW.canPress(timestamp)){ // scoring button
