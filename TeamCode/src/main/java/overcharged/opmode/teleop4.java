@@ -139,11 +139,16 @@ public class teleop4 extends OpMode {
         double denominator = Math.max(Math.abs(y) + Math.abs(x) + Math.abs(rx), 1);
 
 
-        if (vslideOut){
-            slowPower = 0.6;
+        if (slideHeight == SlideHeight.HIGH1){
+            slowPower = 0.5;
+        } else if (slideHeight == SlideHeight.WALL){
+            slowPower = 0.75;
+        } else if (slideHeight == SlideHeight.MID){
+            slowPower = 0.75;
         } else{
             slowPower = 1;
         }
+
 
         // Check if left bumper is pressed to enable hslide control
         if (hSlideisOut) {
@@ -263,6 +268,7 @@ public class teleop4 extends OpMode {
             hSlideGoBottom = true;
             vslideOut = false;
             slideLength = SlideLength.IN;
+            cDelay = true;
             intakeTransfer = true;
 
         }
@@ -270,7 +276,7 @@ public class teleop4 extends OpMode {
             robot.clawBigTilt.setTransfer();
             robot.clawSmallTilt.setTransfer();
             robot.intakeTilt.setTransfer();
-            waitFor(150);
+            waitFor(1000);
             clawOpen = false;
             robot.claw.setClose();
             cDelay = false;
