@@ -7,7 +7,7 @@
             <goBILDA5202SeriesMotor name="vslidesL" port="0" />
             <goBILDA5202SeriesMotor name="vslidesR" port="1" />
             <DigitalDevice name="vlimitswitch" port="4" />
-            <Servo name="hang" port="1" />
+            <Servo name="hang" port="1" />.
             <Servo name="clawSmallTilt" port="2" />
             <Servo name="depoHslide" port="0" />
             <Servo name="clawBigTilt" port="5" />
@@ -24,6 +24,13 @@
             <Servo name="intakeTilt" port="5" />
             <DigitalDevice name="hlimitswitch" port="0" />
             <Servo name="latch" port="3" />
+            <RevColorSensorV3 name="colorSensorF" port="1" bus="1" />
+
+            <DigitalDevice name="led_white" port="5" />
+            <DigitalDevice name="led_yellow" port="2" />
+            <DigitalDevice name="led_red" port="3" />
+            <DigitalDevice name="led_blue" port="4" />
+            <DigitalDevice name="led_green" port="6" />
 
         </LynxModule>
     </LynxUsbDevice>

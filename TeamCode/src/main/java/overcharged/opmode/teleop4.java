@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.RobotLog;
 
 import overcharged.components.Button;
 import overcharged.components.RobotMecanum;
+import overcharged.components.colorSensor;
 import overcharged.pedroPathing.follower.Follower;
 import overcharged.pedroPathing.pathGeneration.Vector;
 
@@ -43,7 +44,7 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 // dpad down - reset slides
 
 @Config
-@TeleOp(name="teleop temp", group="Teleop")
+@TeleOp(name="sexy smooth teleop", group="Teleop")
 public class teleop4 extends OpMode {
     RobotMecanum robot;
     double slowPower = 1;
@@ -52,6 +53,7 @@ public class teleop4 extends OpMode {
     long intakeTiltDelay;
     long depoDelay;
     long clawDelay;
+    long outDelay;
     long transferDelay;
     long intakeStop;
     int wallStep = 0;
@@ -452,6 +454,47 @@ public class teleop4 extends OpMode {
             slideBottom();
             vslideOut = false;
         }
+        if(intakeMode == IntakeMode.IN){
+            if(robot.sensorF.getColor() == colorSensor.Color.RED || robot.sensorF.getColor() == colorSensor.Color.YELLOW){
+                intakeOn = false;
+                intakeMode = IntakeMode.OFF;
+                robot.intake.off();
+            }
+            if(robot.sensorF.getColor() == colorSensor.Color.BLUE){
+                intakeOn = false;
+                intakeMode = IntakeMode.OUT;
+                robot.intake.out();
+                intakeDelay = true;
+                outDelay = System.currentTimeMillis();
+            }
+        }
+        if(intakeDelay && System.currentTimeMillis()-outDelay>250){
+            intakeOn = true;
+            intakeMode = IntakeMode.IN;
+            robot.intake.in();
+            intakeDelay = false;
+            outDelay =0;
+        }
+        robot.drawLed();
+        if(robot.sensorF.getColor() == colorSensor.Color.RED){
+            robot.ledRedOn(true);
+        }
+        else{
+            robot.ledRedOn(false);
+        }
+        if(robot.sensorF.getColor() == colorSensor.Color.YELLOW){
+            robot.ledYellowOn(true);
+        }
+        else{
+            robot.ledYellowOn(false);
+        }
+        if(robot.sensorF.getColor() == colorSensor.Color.BLUE){
+            robot.ledBlueOn(true);
+        }
+        else{
+            robot.ledBlueOn(false);
+        }
+       // robot.ledYellowOn(true);
 
 
         telemetry.addData("h limit switch: ",   hlimitswitch.getState());
@@ -468,6 +511,13 @@ public class teleop4 extends OpMode {
         telemetry.addData("intake", robot.intake.intake.getCurrentPosition());
         telemetry.addData("driveRB", robot.driveRightBack.getCurrentPosition());
         telemetry.addData("hslidePower", robot.hslides.getPower());
+
+        telemetry.addData("sensorF color", robot.sensorF.getColor());
+
+        telemetry.addData("sensorF h", robot.sensorF.getHSV()[0]);
+        telemetry.addData("sensorF s", robot.sensorF.getHSV()[1]);
+        telemetry.addData("sensorF v", robot.sensorF.getHSV()[2]);
+        //telemetry.addData("sensorF wavelength", robot.sensorF.getWavelength());
 
         telemetry.update();
     }
