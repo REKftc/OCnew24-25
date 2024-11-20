@@ -72,6 +72,7 @@ public class teleop4 extends OpMode {
     boolean dDelay = false;
     boolean intakeOutDelay = false;
     boolean moveCount = false;
+    boolean sense = false;
     private DigitalChannel hlimitswitch;
     private DigitalChannel vlimitswitch;
     IntakeMode intakeMode = IntakeMode.OFF;
@@ -215,6 +216,7 @@ public class teleop4 extends OpMode {
             clawDelay = System.currentTimeMillis();
             cDelay = true;
             hSlideGoBottom = false;
+            sense = false;
             RobotLog.ii(TAG_SL, "Force stopped");
         }
 
@@ -224,6 +226,7 @@ public class teleop4 extends OpMode {
             if (!intakeTransfer) {
                 robot.intakeTilt.setTransfer();
                 intakeTransfer = true;
+                sense = false;
                 if(hlimitswitch.getState() && latched) {
                     clawDelay = System.currentTimeMillis();
                     cDelay = true;
@@ -236,6 +239,7 @@ public class teleop4 extends OpMode {
                 intTiltDelay = true;
                 robot.intake.in();
                 intakeMode = IntakeMode.IN;
+                sense = true;
                 intakeTransfer = false;
             }
         }
@@ -296,7 +300,7 @@ public class teleop4 extends OpMode {
             robot.claw.setClose();
             clawOpen = false;
         }
-        if(!intakeTransfer && intTiltDelay && System.currentTimeMillis()- intakeTiltDelay>300){ //delay in submersible
+        if(!intakeTransfer && intTiltDelay && System.currentTimeMillis()- intakeTiltDelay>400){ //delay in submersible
             robot.intakeTilt.setOut();
             intTiltDelay = false;
         }
@@ -325,7 +329,7 @@ public class teleop4 extends OpMode {
         if (slideHeight == SlideHeight.MID && System.currentTimeMillis()-depoDelay>750 && dDelay) { // Depo to Specimen
            // robot.claw.setClose();
             //clawOpen = false;
-            robot.clawBigTilt.setFlat();
+            robot.clawBigTilt.setOut();
             robot.depoHslide.setOut();
             robot.clawSmallTilt.setFlat();
             score = ScoreType.SPECIMEN;
@@ -360,28 +364,26 @@ public class teleop4 extends OpMode {
                 robot.claw.setOpen();
                 clawOpen = true;
             } else if (score == ScoreType.SPECIMEN) {
+                robot.depoHslide.setOut();
                 robot.claw.setClose();
                 robot.clawBigTilt.setOut();
                 robot.depoHslide.setOut();
                 robot.clawSmallTilt.setFlat();
+                waitFor(200);
                 robot.claw.setOpen();
                 clawOpen = true;
             } else {
-
+                robot.claw.setOpen();
+                clawOpen = true;
             }
         }
         //Bring slides slightly up/ Specimen score
-        if(gamepad2.left_trigger>0.9 && Button.HIGH2.canPress(timestamp)){
+        float slight = gamepad2.left_trigger;
+        while(slight>0.9){
             vslideOut = true;
             tempLocation = robot.vSlides.vSlidesL.getCurrentPosition();
             robot.vSlides.moveEncoderTo(tempLocation+150, 1f);
             moveCount = true;
-        }
-        else{
-            if(moveCount) {
-                robot.vSlides.moveEncoderTo(tempLocation, 1f);
-                moveCount = false;
-            }
         }
 
         if(gamepad2.dpad_up && Button.HIGH1.canPress(timestamp)){ //vSlides Up to Bucket
@@ -406,7 +408,7 @@ public class teleop4 extends OpMode {
             slideHeight = SlideHeight.DOWN;
             vslideOut = true;
             wallStep = 0;
-            robot.clawSmallTilt.setPosition(robot.clawSmallTilt.MOVE_TO_WALL);
+            //robot.clawSmallTilt.setPosition(robot.clawSmallTilt.MOVE_TO_WALL);
             depoDelay = System.currentTimeMillis();
             wallStep++;
         }
@@ -416,17 +418,17 @@ public class teleop4 extends OpMode {
             robot.intakeTilt.setFlat();
             robot.clawBigTilt.setFlat();
             robot.clawSmallTilt.setTranSeq();
-            robot.clawBigTilt.setPosition(robot.clawBigTilt.WALL);
+            robot.clawBigTilt.setWall();
             robot.depoHslide.setInit();
 
             depoDelay = System.currentTimeMillis();
             wallStep++;
         }
         if(wallStep==2 && System.currentTimeMillis() - depoDelay > 500){
-            robot.clawSmallTilt.setPosition(robot.clawSmallTilt.WALL);
+            robot.clawSmallTilt.setWall();
+            robot.clawBigTilt.setWall();
             robot.claw.setClose();
             clawOpen = false;
-            depoDelay = 0;
             depoDelay = System.currentTimeMillis();
             wallStep++;
         }
@@ -443,17 +445,25 @@ public class teleop4 extends OpMode {
             vslideGoBottom = true;
             vslideOut = false;
             robot.depoHslide.setInit();
+            if(slideHeight == SlideHeight.DOWN || slideHeight == SlideHeight.WALL) {
 
-            robot.intakeTilt.setFlat();
-            robot.clawBigTilt.setFlat();
-            robot.clawSmallTilt.setTranSeq();
-            waitFor(400);
+                robot.intakeTilt.setFlat();
+                robot.clawBigTilt.setFlat();
+                robot.clawSmallTilt.setTranSeq();
+                waitFor(400);
 
-            robot.clawSmallTilt.setTransfer();
-            robot.clawBigTilt.setTransfer();
-            robot.claw.setOpen();
-            waitFor(400);
-            robot.intakeTilt.setTransfer();
+                robot.clawSmallTilt.setTransfer();
+                robot.clawBigTilt.setTransfer();
+                robot.claw.setOpen();
+                waitFor(400);
+                robot.intakeTilt.setTransfer();
+            }
+            else{
+                robot.clawSmallTilt.setTransfer();
+                robot.clawBigTilt.setTransfer();
+                robot.claw.setOpen();
+                robot.intakeTilt.setTransfer();
+            }
         }
 
         if(vslideGoBottom){ //Reset vSlide check
@@ -463,7 +473,7 @@ public class teleop4 extends OpMode {
 
         //Intake Color sensor
         if(intakeMode == IntakeMode.IN){
-            if(robot.sensorF.getColor() == colorSensor.Color.RED || robot.sensorF.getColor() == colorSensor.Color.YELLOW){
+            if(robot.sensorF.getColor() == colorSensor.Color.RED && sense || robot.sensorF.getColor() == colorSensor.Color.YELLOW && sense){
                 intakeOn = false;
                 intakeMode = IntakeMode.OFF;
                 robot.intake.off();
