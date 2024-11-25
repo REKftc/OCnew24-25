@@ -8,7 +8,7 @@ public class clawBigTilt {
     public OcServo clawBigTilt;
     public VoltageSensor intakeVolt;
     public static final float INIT = 218f;//230f;//90f;//70f;//230f;
-    public static final float TRANSFER = 218f;//225f;//233f;//226f;//223f;//201f;//175f;
+    public static final float TRANSFER = 224f;//225f;//233f;//226f;//223f;//201f;//175f;
     public static final float FLAT = 151f;//107f;//158f;
     public static final float OUT = 153f;//51f;//52f;
     public static final float WALL = 24f;//52f;

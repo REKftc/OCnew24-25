@@ -382,6 +382,9 @@ public class AutoTest extends OpMode{
         autoPath();
         telemetry.addLine("TValue: "+follower.getCurrentTValue());
         telemetry.addLine("Path: " + pathState);
+
+        //Functions
+
     }
 
     // initialize robot

@@ -6,6 +6,9 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.util.RobotLog;
 
 import overcharged.components.RobotMecanum;
 import overcharged.drive.SampleMecanumDrive;
@@ -25,8 +28,14 @@ import overcharged.pedroPathing.util.Timer;
 @Autonomous(name = "red bucket", group = "Autonomous")
 public class autoRedBucket extends OpMode{
 
+    //stuff
+    boolean vslideGoBottom = false;
+    boolean hSlideGoBottom = false;
+
     // Init
     private RobotMecanum robot;
+    private DigitalChannel hlimitswitch;
+    private DigitalChannel vlimitswitch;
     FtcDashboard dashboard = FtcDashboard.getInstance();
     SampleMecanumDrive drive;
     MultipleTelemetry telems;
@@ -72,25 +81,30 @@ public class autoRedBucket extends OpMode{
     private Pose redRightBasket = new Pose();
 
     // OTHER POSES
-    private Pose beforeBucket;
-    private Pose startPose = new Pose(156, 56, Math.PI/2);
+    private Pose beforeBucket, ready2Score;
+    private Pose startPose = new Pose(130, 60, Math.PI/2);
 
-    private Path firstScore;
+    private Path firstScore, inchBucket, goSafe;
 
     private Follower follower;
 
     //TODO: Starting from here are the poses for the paths
     public void firstBucket(){
-        beforeBucket = new Pose(120,24,Math.PI/4);
+        beforeBucket = new Pose(120,34,Math.PI/4);
+        ready2Score = new Pose(124,27,Math.PI/4);
     }
 
 
     //TODO: here are where the paths are defined
     public void buildPaths() {
         firstScore = new Path(new BezierLine(new Point(startPose),new Point(beforeBucket)));
-        firstScore.setConstantHeadingInterpolation(Math.PI/2);
+        //firstScore.setConstantHeadingInterpolation(Math.PI/2);
 
+        inchBucket = new Path(new BezierLine(new Point(beforeBucket), new Point(ready2Score)));
+        inchBucket.setConstantHeadingInterpolation(3*Math.PI/4);
 
+        goSafe = new Path(new BezierLine(new Point(ready2Score), new Point(beforeBucket)));
+        inchBucket.setConstantHeadingInterpolation(Math.PI);
     }
 
 
@@ -106,9 +120,56 @@ public class autoRedBucket extends OpMode{
                 break;
             case 101:
                 if (follower.getCurrentTValue() > 0.1) {
-                    firstScore.setLinearHeadingInterpolation(startPose.getHeading() - 0.1 * MathFunctions.getTurnDirection(startPose.getHeading(), firstScore.getEndTangent().getTheta()) * MathFunctions.getSmallestAngleDifference(startPose.getHeading(), firstScore.getEndTangent().getTheta()), Math.PI / 4);
+                    firstScore.setLinearHeadingInterpolation(startPose.getHeading() - 0.1 * MathFunctions.getTurnDirection(startPose.getHeading(), firstScore.getEndTangent().getTheta()) * MathFunctions.getSmallestAngleDifference(startPose.getHeading(), firstScore.getEndTangent().getTheta()), 3*Math.PI / 4);
+                    setPathState(11);
+                }
+                break;
+            case 11:
+                if(!follower.isBusy()) {
+                    follower.followPath(inchBucket);
+                    setPathState(12);
+                }
+                break;
+            case 12:
+                if(!follower.isBusy()){
+                    robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1f);
+                    waitFor(600);
+                    setPathState(13);
+                }
+                break;
+            case 13:
+                robot.clawBigTilt.setBucket();
+                robot.depoHslide.setInit();
+                robot.clawSmallTilt.setOut();
+                waitFor(780);
+                robot.claw.setOpen();
+                setPathState(14);
+                break;
+            case 14:
+                waitFor(500);
+                follower.followPath(goSafe);
+                goSafe.setLinearHeadingInterpolation(ready2Score.getHeading(), Math.PI);
+                setPathState(15);
+                break;
+            case 15:
+                if(follower.getCurrentTValue() >0.25){
+                    slideBottom();
+                    robot.clawBigTilt.setTransfer();
+                    robot.clawSmallTilt.setTransfer();
+                    setPathState(16);
+                }
+                break;
+            case 16:
+                if(!follower.isBusy()) {
+                    robot.hslides.moveEncoderTo(robot.hslides.PRESET1, 1f);
+                    robot.intakeTilt.setOut();
+                    robot.intake.in();
                     setPathState(100);
                 }
+
+                break;
+
+
 
             case 100: // EMPTY TEST CASE
                 //follower.holdPoint(new BezierPoint(firstScore.getLastControlPoint()), Math.toRadians(-90));
@@ -137,6 +198,21 @@ public class autoRedBucket extends OpMode{
         autoPath();
         telemetry.addLine("TValue: "+follower.getCurrentTValue());
         telemetry.addLine("Path: " + pathState);
+
+        //functions
+        if (!hlimitswitch.getState() && hSlideGoBottom) {
+            robot.latch.setInit();
+            robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.hslides.hslides.setPower(-1);
+            RobotLog.ii(TAG_SL, "Going down");
+        } else if (hlimitswitch.getState() && hSlideGoBottom) {
+            robot.latch.setInit();
+            robot.intakeTilt.setTransfer();
+            robot.hslides.hslides.setPower(0);
+            robot.hslides.hslides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            hSlideGoBottom = false;
+            RobotLog.ii(TAG_SL, "Force stopped");
+        }
     }
 
     // initialize robot
@@ -156,6 +232,14 @@ public class autoRedBucket extends OpMode{
         //follower init
         follower = new Follower(hardwareMap);
         follower.setStartingPose(startPose);
+
+        //robot init
+        hlimitswitch = hardwareMap.get(DigitalChannel.class, "hlimitswitch");
+        vlimitswitch = hardwareMap.get(DigitalChannel.class, "vlimitswitch");
+        robot.intakeTilt.setTransfer();
+        robot.clawBigTilt.setTransfer();
+        robot.clawSmallTilt.setTransfer();
+        robot.claw.setClose();
     }
 
     //loop de loop but initialized
@@ -171,6 +255,30 @@ public class autoRedBucket extends OpMode{
 
         // safety net if auto doesn't start for some reason
         autoPath();
+    }
+
+    public void slideBottom() { //Slide bottom
+        if (vlimitswitch.getState() && vslideGoBottom) {
+            robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.vSlides.vSlidesR.setPower(-1);
+            robot.vSlides.vSlidesL.setPower(-1);
+            RobotLog.ii(TAG_SL, "Going down");
+        } else if (!vlimitswitch.getState() && vslideGoBottom) {
+            //robot.hslides.forceStop();
+            robot.vSlides.vSlidesR.setPower(0);
+            robot.vSlides.vSlidesL.setPower(0);
+            robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            robot.vSlides.vSlidesR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+            vslideGoBottom = false;
+            RobotLog.ii(TAG_SL, "Force stopped");
+        }
+    }
+    public static void waitFor(int milliseconds) { //Waitor Function
+        long startTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - startTime < milliseconds) {
+            // loop
+        }
     }
 }
 

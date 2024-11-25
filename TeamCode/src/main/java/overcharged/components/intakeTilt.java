@@ -7,10 +7,11 @@ public class intakeTilt {
     //public OcServo intakeTilt;
     public OcServo intakeTilt;
     public VoltageSensor intakeVolt;
-    public static final float INIT = 107f;//36f;//230f;
-    public static final float TRANSFER = 107f;//84f;//36f;//175f;
-    public static final float FLAT = 171f;//158f;
-    public static final float OUT = 202f;//255f;//52f;
+    public static final float INIT = 55f;//36f;//230f;
+    public static final float TRANSFER = 55f;//84f;//36f;//175f;
+    public static final float HIGH = 24f;
+    public static final float FLAT = 103f;//158f;
+    public static final float OUT = 132f;//255f;//52f;
     public static final float MOVE_TO_WALL = 124f;//136f;
 
     public intakeTilt(HardwareMap hardwareMap) {
@@ -25,6 +26,8 @@ public class intakeTilt {
     public void setInit() { intakeTilt.setPosition(INIT); }
 
     public void setTransfer() { intakeTilt.setPosition(TRANSFER); }
+
+    public void setHigh() { intakeTilt.setPosition(HIGH);}
 
     public void setFlat() { intakeTilt.setPosition(FLAT); }
 
