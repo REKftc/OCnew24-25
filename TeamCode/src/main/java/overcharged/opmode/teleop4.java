@@ -527,7 +527,7 @@ public class teleop4 extends OpMode {
             vslideOut = false;
         }
         if(gamepad2.y && Button.SLIGHT_UP.canPress(timestamp)){
-            if(robot.vSlides.vSlidesL.getCurrentPosition() < robot.vSlides.WALL){
+            if(robot.vSlides.vSlidesL.getCurrentPosition() < robot.vSlides.high1){
                 robot.vSlides.moveEncoderTo((int)(robot.vSlides.vSlidesL.getCurrentPosition())+171, 0.9f);
             }
         }
