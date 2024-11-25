@@ -43,7 +43,7 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 // dpad down - reset slides
 
 @Config
-@TeleOp(name="sexy smooth teleop", group="Teleop")
+@TeleOp(name="not yet sexy smooth teleop", group="Teleop")
 public class teleop4 extends OpMode {
     RobotMecanum robot;
     double slowPower = 1;
@@ -248,7 +248,7 @@ public class teleop4 extends OpMode {
             }
         }
 
-        if(intakeOutDelay && System.currentTimeMillis()-outakeTime>350){
+        if(intakeOutDelay && System.currentTimeMillis()-outakeTime>200){
             intakeOutDelay = false;
             outakeTime=0;
             robot.intake.out();
@@ -257,7 +257,7 @@ public class teleop4 extends OpMode {
             intakeStep++;
             outakeTime = System.currentTimeMillis();
         }
-        if(intakeStep == 1 && System.currentTimeMillis()-outakeTime>260){
+        if(intakeStep == 1 && System.currentTimeMillis()-outakeTime>80){
             robot.intake.in();
             intakeMode = IntakeMode.IN;
             hSlideGoBottom = true;
@@ -357,6 +357,7 @@ public class teleop4 extends OpMode {
             robot.depoHslide.setOut();
             robot.clawSmallTilt.setFlat();
             score = ScoreType.SPECIMEN;
+            depoDelay = 0;
             dDelay = false;
         }
 
@@ -460,7 +461,7 @@ public class teleop4 extends OpMode {
             depoDelay = System.currentTimeMillis();
             wallStep++;
         }
-        if(wallStep==2 && System.currentTimeMillis() - depoDelay > 500){
+        if(wallStep==2 && System.currentTimeMillis() - depoDelay > 400){
             robot.claw.setClose();
             clawOpen = false;
             robot.clawSmallTilt.setWall();
@@ -468,7 +469,7 @@ public class teleop4 extends OpMode {
             depoDelay = System.currentTimeMillis();
             wallStep++;
         }
-        if(wallStep==3 && System.currentTimeMillis() - depoDelay > 350){
+        if(wallStep==3 && System.currentTimeMillis() - depoDelay > 150){
             robot.claw.setOpen();
             clawOpen = true;
             wallStep=0;
@@ -477,11 +478,11 @@ public class teleop4 extends OpMode {
 
         if(gamepad2.dpad_down && Button.SLIDE_RESET.canPress(timestamp)) { // Slide reset
             clawOpen = true;
-            vslideGoBottom = true;
+            //vslideGoBottom = true;
             vslideOut = false;
             robot.depoHslide.setInit();
-            if(slideHeight == SlideHeight.DOWN || slideHeight == SlideHeight.WALL || slideHeight == slideHeight.LOWER) {
-
+            if(slideHeight == SlideHeight.DOWN || slideHeight == SlideHeight.WALL || slideHeight == SlideHeight.LOWER) {
+                vslideGoBottom = true;
                 robot.intakeTilt.setFlat();
                 robot.clawBigTilt.setFlat();
                 robot.clawSmallTilt.setTranSeq();
@@ -494,7 +495,14 @@ public class teleop4 extends OpMode {
                 robot.claw.setOpen();
                 robot.intakeTilt.setTransfer();
                 slideHeight = SlideHeight.DOWN;
+                depoDelay = System.currentTimeMillis();
+                dDelay=true;
             }
+        }
+        if(slideHeight == SlideHeight.DOWN && System.currentTimeMillis()-depoDelay>300 &&dDelay){
+            vslideGoBottom = true;
+            depoDelay =0;
+            dDelay =false;
         }
         if(resetStep==1 && System.currentTimeMillis() - depoDelay > 400){
             robot.clawSmallTilt.setTransfer();
@@ -503,7 +511,7 @@ public class teleop4 extends OpMode {
             clawOpen = true;
 
             depoDelay = System.currentTimeMillis();
-            wallStep++;
+            resetStep++;
         }
         if(resetStep==2 && System.currentTimeMillis() - depoDelay > 400){
             robot.intakeTilt.setTransfer();
@@ -517,6 +525,17 @@ public class teleop4 extends OpMode {
         if(vslideGoBottom){ //Reset vSlide check
             slideBottom();
             vslideOut = false;
+        }
+        if(gamepad2.y && Button.SLIGHT_UP.canPress(timestamp)){
+            if(robot.vSlides.vSlidesL.getCurrentPosition() < robot.vSlides.WALL){
+                robot.vSlides.moveEncoderTo((int)(robot.vSlides.vSlidesL.getCurrentPosition())+171, 0.9f);
+            }
+        }
+
+        if(gamepad2.a && Button.SLIGHT_DOWN.canPress(timestamp)){
+            if(robot.vSlides.vSlidesL.getCurrentPosition() > 100){
+                robot.vSlides.moveEncoderTo((int)(robot.vSlides.vSlidesL.getCurrentPosition())-90, 0.9f);
+            }
         }
 
         //Intake Color sensor
