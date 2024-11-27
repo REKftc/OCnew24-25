@@ -21,6 +21,7 @@ import overcharged.pedroPathing.pathGeneration.BezierLine;
 import overcharged.pedroPathing.pathGeneration.BezierPoint;
 import overcharged.pedroPathing.pathGeneration.MathFunctions;
 import overcharged.pedroPathing.pathGeneration.Path;
+import overcharged.pedroPathing.pathGeneration.PathChain;
 import overcharged.pedroPathing.pathGeneration.Point;
 import overcharged.pedroPathing.util.Timer;
 
@@ -82,30 +83,44 @@ public class autoRedBucket extends OpMode{
 
     // OTHER POSES
     private Pose beforeBucket, ready2Score;
-    private Pose startPose = new Pose(130, 60, Math.PI/2);
+    private Pose startPose = new Pose(130, 60, -Math.PI/2);
 
-    private Path firstScore, inchBucket, goSafe;
+    private Path firstScore, inchBucket, goSafe, goBack;
+
+    private PathChain preload;
 
     private Follower follower;
 
     //TODO: Starting from here are the poses for the paths
     public void firstBucket(){
-        beforeBucket = new Pose(120,34,Math.PI/4);
-        ready2Score = new Pose(124,27,Math.PI/4);
+        beforeBucket = new Pose(120,34,-3*Math.PI/4);
+        ready2Score = new Pose(124,27,-3*Math.PI/4);
     }
 
 
     //TODO: here are where the paths are defined
     public void buildPaths() {
         firstScore = new Path(new BezierLine(new Point(startPose),new Point(beforeBucket)));
-        //firstScore.setConstantHeadingInterpolation(Math.PI/2);
+        firstScore.setConstantHeadingInterpolation(-Math.PI/2);
 
         inchBucket = new Path(new BezierLine(new Point(beforeBucket), new Point(ready2Score)));
-        inchBucket.setConstantHeadingInterpolation(3*Math.PI/4);
+        inchBucket.setConstantHeadingInterpolation(-3*Math.PI/4);
+
+        PathChain preload = follower.pathBuilder()
+                .addPath(new BezierLine(new Point(startPose),new Point(beforeBucket)))
+                .setLinearHeadingInterpolation(startPose.getHeading(), beforeBucket.getHeading())
+                .addPath(new BezierLine(new Point(beforeBucket), new Point(ready2Score)))
+                .setConstantHeadingInterpolation(ready2Score.getHeading())
+                .setPathEndTimeoutConstraint(4.0)
+                .build();
+
+
 
         goSafe = new Path(new BezierLine(new Point(ready2Score), new Point(beforeBucket)));
-        inchBucket.setConstantHeadingInterpolation(Math.PI);
+        inchBucket.setConstantHeadingInterpolation(-Math.PI/2);
     }
+
+
 
 
     // TODO: HERE IS WHERE THE MAIN PATH IS
@@ -115,12 +130,13 @@ public class autoRedBucket extends OpMode{
             // Auto Body
             //
             case 10: // scores initial specimen
-                follower.followPath(firstScore);
-                setPathState(101);
+                follower.followPath(preload, true);
+                setPathState(12);
                 break;
             case 101:
                 if (follower.getCurrentTValue() > 0.1) {
-                    firstScore.setLinearHeadingInterpolation(startPose.getHeading() - 0.1 * MathFunctions.getTurnDirection(startPose.getHeading(), firstScore.getEndTangent().getTheta()) * MathFunctions.getSmallestAngleDifference(startPose.getHeading(), firstScore.getEndTangent().getTheta()), 3*Math.PI / 4);
+                    //firstScore.setLinearHeadingInterpolation(startPose.getHeading() - 0.1 * MathFunctions.getTurnDirection(startPose.getHeading(), firstScore.getEndTangent().getTheta()) * MathFunctions.getSmallestAngleDifference(startPose.getHeading(), firstScore.getEndTangent().getTheta()), -3*Math.PI / 4);
+                    firstScore.setLinearHeadingInterpolation(-Math.PI/2, -3*Math.PI / 4);
                     setPathState(11);
                 }
                 break;
@@ -146,9 +162,9 @@ public class autoRedBucket extends OpMode{
                 setPathState(14);
                 break;
             case 14:
-                waitFor(500);
+                waitFor(700);
                 follower.followPath(goSafe);
-                goSafe.setLinearHeadingInterpolation(ready2Score.getHeading(), Math.PI);
+                goSafe.setLinearHeadingInterpolation(beforeBucket.getHeading(), 0);
                 setPathState(15);
                 break;
             case 15:
@@ -161,12 +177,17 @@ public class autoRedBucket extends OpMode{
                 break;
             case 16:
                 if(!follower.isBusy()) {
+                    robot.latch.setOut();
                     robot.hslides.moveEncoderTo(robot.hslides.PRESET1, 1f);
                     robot.intakeTilt.setOut();
                     robot.intake.in();
                     setPathState(100);
                 }
-
+                break;
+            case 17:
+                follower.followPath(inchBucket);
+                inchBucket.setLinearHeadingInterpolation(ready2Score.getHeading(), -3*Math.PI/4);
+                setPathState(100);
                 break;
 
 

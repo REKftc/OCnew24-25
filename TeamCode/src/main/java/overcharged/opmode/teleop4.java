@@ -214,6 +214,7 @@ public class teleop4 extends OpMode {
             robot.hslides.hslides.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             hSlideisOut = false;
             clawDelay = System.currentTimeMillis();
+            gamepad1.rumble(500);
             cDelay = true;
             hSlideGoBottom = false;
             sense = false;
@@ -239,8 +240,13 @@ public class teleop4 extends OpMode {
                 //intakeOutDelay = true;
             } else {
                 robot.intakeTilt.setFlat();
-                intakeTiltDelay = System.currentTimeMillis();
-                intTiltDelay = true;
+                if(hSlideisOut) {
+                    intakeTiltDelay = System.currentTimeMillis();
+                    intTiltDelay = true;
+                }
+                else{
+                    robot.intakeTilt.setOut();
+                }
                 robot.intake.in();
                 intakeMode = IntakeMode.IN;
                 sense = true;
@@ -248,22 +254,30 @@ public class teleop4 extends OpMode {
             }
         }
 
-        if(intakeOutDelay && System.currentTimeMillis()-outakeTime>200){
+
+        if(intakeOutDelay){
             intakeOutDelay = false;
-            outakeTime=0;
-            robot.intake.out();
-            intakeMode = IntakeMode.OUT;
+            robot.intake.in();
+            intakeMode = IntakeMode.IN;
             intakeStep = 0;
             intakeStep++;
             outakeTime = System.currentTimeMillis();
         }
-        if(intakeStep == 1 && System.currentTimeMillis()-outakeTime>95){
+        if(intakeStep == 1 && System.currentTimeMillis()-outakeTime>185){
+            robot.intake.out();
+            intakeMode = IntakeMode.OUT;
+            intakeStep++;
+            outakeTime = System.currentTimeMillis();
+        }
+        if(intakeStep == 2 && System.currentTimeMillis()-outakeTime>100){
             robot.intake.in();
             intakeMode = IntakeMode.IN;
             hSlideGoBottom = true;
             intakeStep = 0;
             outakeTime = 0;
         }
+
+
 
 
 
@@ -304,7 +318,7 @@ public class teleop4 extends OpMode {
             intakeTransfer = true;
         }
 
-        if(intakeTransfer && cDelay && System.currentTimeMillis()-clawDelay>250){ // Transfer System
+        if(intakeTransfer && cDelay && System.currentTimeMillis()-clawDelay>150){ // Transfer System
             cDelay = false;
             robot.clawBigTilt.setTransfer();
             robot.clawSmallTilt.setTransfer();
@@ -312,7 +326,7 @@ public class teleop4 extends OpMode {
             transferStep++;
             clawDelay = System.currentTimeMillis();
         }
-        if (transferStep ==1 & System.currentTimeMillis()-clawDelay>200){
+        if (transferStep ==1 & System.currentTimeMillis()-clawDelay>80){
             robot.intakeTilt.setTransfer();
             transferStep++;
             clawDelay = System.currentTimeMillis();
@@ -320,6 +334,7 @@ public class teleop4 extends OpMode {
         if (transferStep ==2 & System.currentTimeMillis()-clawDelay>100){
             robot.claw.setClose();
             clawOpen = false;
+            gamepad2.rumble(500);
             transferStep = 0;
             clawDelay = 0;
         }
@@ -341,7 +356,7 @@ public class teleop4 extends OpMode {
         }
 
         // Bucket(High & Low) sequence
-        if (slideHeight == SlideHeight.HIGH1 && System.currentTimeMillis()-depoDelay>750 &dDelay || slideHeight == SlideHeight.LOWER && System.currentTimeMillis()-depoDelay>550 &dDelay) { // Depo to Bucket
+        if (slideHeight == SlideHeight.HIGH1 && System.currentTimeMillis()-depoDelay>650 &dDelay || slideHeight == SlideHeight.LOWER && System.currentTimeMillis()-depoDelay>500 &dDelay) { // Depo to Bucket
             robot.clawBigTilt.setBucket();
             robot.depoHslide.setInit();
             robot.clawSmallTilt.setOut();
@@ -350,7 +365,7 @@ public class teleop4 extends OpMode {
         }
 
 
-        if (slideHeight == SlideHeight.MID && System.currentTimeMillis()-depoDelay>750 && dDelay) { // Depo to Specimen
+        if (slideHeight == SlideHeight.MID && System.currentTimeMillis()-depoDelay>700 && dDelay) { // Depo to Specimen
            // robot.claw.setClose();
             //clawOpen = false;
             robot.claw.setSpec();
@@ -450,7 +465,7 @@ public class teleop4 extends OpMode {
         }
 
         // Wall pickup Sequence
-        if(wallStep==1 && System.currentTimeMillis() - depoDelay > 250){
+        if(wallStep==1 && System.currentTimeMillis() - depoDelay > 220){
             robot.claw.setClose();
             clawOpen = false;
             robot.intakeTilt.setFlat();
@@ -462,7 +477,7 @@ public class teleop4 extends OpMode {
             depoDelay = System.currentTimeMillis();
             wallStep++;
         }
-        if(wallStep==2 && System.currentTimeMillis() - depoDelay > 400){
+        if(wallStep==2 && System.currentTimeMillis() - depoDelay > 360){
             robot.claw.setClose();
             clawOpen = false;
             robot.clawSmallTilt.setWall();
@@ -470,7 +485,7 @@ public class teleop4 extends OpMode {
             depoDelay = System.currentTimeMillis();
             wallStep++;
         }
-        if(wallStep==3 && System.currentTimeMillis() - depoDelay > 150){
+        if(wallStep==3 && System.currentTimeMillis() - depoDelay > 140){
             robot.claw.setOpen();
             clawOpen = true;
             wallStep=0;
@@ -517,6 +532,7 @@ public class teleop4 extends OpMode {
         if(resetStep==2 && System.currentTimeMillis() - depoDelay > 400){
             robot.intakeTilt.setTransfer();
             slideHeight = SlideHeight.DOWN;
+            gamepad2.rumble(500);
             resetStep=0;
             depoDelay = 0;
         }
@@ -549,6 +565,7 @@ public class teleop4 extends OpMode {
                 intakeOn = false;
                 intakeMode = IntakeMode.OFF;
                 robot.intake.off();
+                gamepad1.rumble(500);
             }
             /*
             if(robot.sensorF.getColor() == colorSensor.Color.BLUE){
@@ -575,16 +592,19 @@ public class teleop4 extends OpMode {
         robot.drawLed();
         if(robot.sensorF.getColor() == colorSensor.Color.RED){
             robot.ledRedOn(true);
+            gamepad1.setLedColor(255,0,0,500);;
         }
         else{
             robot.ledRedOn(false);
         }
         if(robot.sensorF.getColor() == colorSensor.Color.YELLOW){
             robot.ledYellowOn(true);
+            gamepad1.setLedColor(255,255,0,500);;
         }
         else{
             robot.ledYellowOn(false);
         }
+
         if(robot.sensorF.getColor() == colorSensor.Color.BLUE){
             robot.ledBlueOn(true);
         }

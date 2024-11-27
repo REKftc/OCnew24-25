@@ -117,7 +117,8 @@ Tester
 
 
         OcServo intakeTilt = robot.intakeTilt.intakeTilt;
-        OcServo hang = robot.hang.hang;
+        OcServo hang = robot.hang.hang1;
+
         OcServo latch = robot.latch.latch;
         OcServo claw = robot.claw.claw;
         OcServo clawSmallTilt = robot.clawSmallTilt.clawSmallTilt;

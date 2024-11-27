@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 public class hang {
     //public OcServo intakeTilt;
-    public OcServo hang;
+    public OcServo hang1, hang2;
     //public VoltageSensor intakeVolt;
     public static final float INIT = 189f;
    // public static final float TRANSFER = 70f;//175f;
@@ -13,21 +13,21 @@ public class hang {
 
 
     public hang(HardwareMap hardwareMap) {
-        hang = new OcServo(hardwareMap, "hang", INIT);
+        hang1 = new OcServo(hardwareMap, "hang", INIT);
         //intakeTilt = hardwareMap.get(OcServo.class, "intakeTilt");
         //intakeVolt = hardwareMap.voltageSensor.iterator().next();
     }
     public void setPosition(float pos){
-        hang.setPosition(pos);
+        hang1.setPosition(pos);
     }
 
-    public void setInit() { hang.setPosition(INIT); }
+    public void setInit() { hang1.setPosition(INIT); }
 
     //public void setTransfer() { intakeTilt.setPosition(TRANSFER); }
 
    // public void setFlat() { intakeTilt.setPosition(SPEC); }
 
-    public void setOut() { hang.setPosition(OUT); }
+    public void setOut() { hang1.setPosition(OUT); }
 
     //public void getVoltage() { intakeVolt.getVoltage();}
 }
