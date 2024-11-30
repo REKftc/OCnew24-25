@@ -118,7 +118,7 @@ Tester
 
         OcServo intakeTilt = robot.intakeTilt.intakeTilt;
         OcServo hang = robot.hang.hang1;
-
+        OcServo depoWrist = robot.depoWrist.depoWrist;
         OcServo latch = robot.latch.latch;
         OcServo claw = robot.claw.claw;
         OcServo clawSmallTilt = robot.clawSmallTilt.clawSmallTilt;
@@ -126,6 +126,7 @@ Tester
         OcServo depoHslide = robot.depoHslide.depoHslide;
         servos.add(intakeTilt);
         servos.add(hang);
+        servos.add(depoWrist);
         servos.add(latch);
         servos.add(claw);
         servos.add(clawSmallTilt);

@@ -41,7 +41,7 @@ import overcharged.pedroPathing.pathGeneration.Vector;
 public class OTOSLocalizer extends Localizer {
     private HardwareMap hardwareMap;
     private Pose startPose;
-    private SparkFunOTOSCorrected otos;
+    private SparkFunOTOS otos;
     private SparkFunOTOS.Pose2D otosPose;
     private SparkFunOTOS.Pose2D otosVel;
     private SparkFunOTOS.Pose2D otosAcc;
@@ -74,7 +74,7 @@ public class OTOSLocalizer extends Localizer {
           "SparkFunOTOS Corrected" in your robot config
          */
         // TODO: replace this with your OTOS port
-        otos = hardwareMap.get(SparkFunOTOSCorrected.class, "sensor_otos");
+        otos = hardwareMap.get(SparkFunOTOS.class, "sensor_otos");
 
         otos.setLinearUnit(DistanceUnit.INCH);
         otos.setAngularUnit(AngleUnit.RADIANS);
@@ -87,7 +87,7 @@ public class OTOSLocalizer extends Localizer {
 
         // TODO: replace these with your tuned multipliers
         otos.setAngularScalar(0.9752);
-        otos.setLinearScalar(0.8822);
+        otos.setLinearScalar(1.008);
 
         otos.calibrateImu();
         otos.resetTracking();
