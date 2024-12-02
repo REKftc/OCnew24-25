@@ -264,23 +264,13 @@ public class teleop4 extends OpMode {
         if (gamepad1.touchpad && Button.CYCLE_MODE.canPress(timestamp)) {
             modeCount += 1;
             gamepad1.rumble(250);
-            if (2 % modeCount == 0){
+            if (modeCount % 2 == 0){
                 redSpec = false;
                 red = true;
                 gamepad1.rumble(20,0,500);
             }
-            else if (3 % modeCount == 0){
-                red = false;
-                blueSpec = true;;
-                gamepad1.rumble(0,20,500);
-            }
-            else if (4 % modeCount == 0){
-                blueSpec = false;
-                blue = true;
-                gamepad1.rumble(0,20,500);
-            }
             else{
-                blue = false;
+                red = false;
                 redSpec = true;
                 gamepad1.rumble(20,0,500);
             }
@@ -288,10 +278,7 @@ public class teleop4 extends OpMode {
         if(redSpec){
             gamepad1.setLedColor(255,0,0,250);
         }
-        else if (blueSpec){
-            gamepad1.setLedColor(0,0,255,250);
-        }
-        else if (red||blue){
+        else if (red){
             gamepad1.setLedColor(255,255,0,250);
         }
 
@@ -335,13 +322,13 @@ public class teleop4 extends OpMode {
             intakeStep++;
             outakeTime = System.currentTimeMillis();
         }
-        if(intakeStep == 1 && System.currentTimeMillis()-outakeTime>185){
+        if(intakeStep == 1 && System.currentTimeMillis()-outakeTime>200){
             robot.intake.out();
             intakeMode = IntakeMode.OUT;
             intakeStep++;
             outakeTime = System.currentTimeMillis();
         }
-        if(intakeStep == 2 && System.currentTimeMillis()-outakeTime>100){
+        if(intakeStep == 2 && System.currentTimeMillis()-outakeTime>120){
             robot.intake.in();
             intakeMode = IntakeMode.IN;
             hSlideGoBottom = true;
@@ -432,7 +419,9 @@ public class teleop4 extends OpMode {
 
         // Bucket(High & Low) sequence
         if (slideHeight == SlideHeight.HIGH1 && System.currentTimeMillis()-depoDelay>150 &dDelay || slideHeight == SlideHeight.LOWER && System.currentTimeMillis()-depoDelay>150 &dDelay) { // Depo to Bucket
+            robot.intakeTilt.setFlat();
             robot.depoWrist.setOut();
+            robot.clawSmallTilt.setOut();
             robot.depoHslide.setInit();
             score = ScoreType.BUCKET;
             bucketSeq = true;
@@ -443,7 +432,7 @@ public class teleop4 extends OpMode {
             bucketSeq = false;
             depoDelay = 0;
             robot.clawBigTilt.setBucket();
-            robot.clawSmallTilt.setOut();
+            robot.intakeTilt.setTransfer();
         }
 
 
@@ -565,7 +554,7 @@ public class teleop4 extends OpMode {
             depoDelay = System.currentTimeMillis();
             wallStep++;
         }
-        if(wallStep==3 && System.currentTimeMillis() - depoDelay > 140){
+        if(wallStep==3 && System.currentTimeMillis() - depoDelay > 200){
             robot.claw.setOpen();
             clawOpen = true;
             wallStep=0;

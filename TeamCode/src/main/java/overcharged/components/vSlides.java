@@ -28,8 +28,8 @@ public class vSlides {
     public static final int PRESET1 = 142;
     public static final int OUT = 1000;
     public static final int wall = 300;
-    public static final int mid = 710;//400;
-    public static final int lower = 780;
+    public static final int mid = 630;//400;
+    public static final int lower = 755;
     public static final int high1 = 1495;
     public static final int high2 = 800;
     public static double p = 18;
