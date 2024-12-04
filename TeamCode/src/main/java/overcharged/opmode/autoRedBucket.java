@@ -75,14 +75,6 @@ public class autoRedBucket extends OpMode{
 
     //TODO: here are where the paths are defined
     public void buildPaths() {
-        /*
-        firstScore = new Path(new BezierLine(new Point(startPose),new Point(beforeBucket)));
-        firstScore.setConstantHeadingInterpolation(Math.PI/2);
-
-        inchBucket = new Path(new BezierLine(new Point(beforeBucket), new Point(ready2Score)));
-        inchBucket.setConstantHeadingInterpolation(3*Math.PI/4);
-
-         */
 
         preload = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(startPose),new Point(initBucket)))
@@ -122,7 +114,7 @@ public class autoRedBucket extends OpMode{
                 if(pathTimer.getElapsedTime()>2000){
                     pathTimer.resetTimer();
                     robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1f);
-                    waitFor(600);
+                    waitFor(500);
                     robot.depoWrist.setOut();
                     waitFor(600);
                     setPathState(13);
@@ -133,7 +125,7 @@ public class autoRedBucket extends OpMode{
                 robot.clawBigTilt.setBucket();
                 robot.depoHslide.setInit();
                 robot.clawSmallTilt.setOut();
-                waitFor(900);
+                waitFor(800);
                 robot.claw.setBig();
                 scored = true;
                 setPathState(14);
@@ -150,47 +142,40 @@ public class autoRedBucket extends OpMode{
                     if(floorRep == 3) {
                         follower.followPath(goSafe);
                         goSafe.setLinearHeadingInterpolation(beforeBucket.getHeading(), Math.toRadians(180));
+                        robot.hslides.moveEncoderTo(robot.hslides.PRESET1, 0.8f);
                         vslideGoBottom = true;
-                        setPathState(15);
+                        setPathState(16);
                     }
                     else if(floorRep==2){
                         follower.followPath(goBack);
                         goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(200));
+                        robot.hslides.moveEncoderTo(robot.hslides.PRESET2, 0.8f);
                         vslideGoBottom = true;
-                        setPathState(15);
+                        setPathState(16);
                     }
                     else if(floorRep==1){
                         follower.followPath(goBack);
                         goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(230));
+                        robot.hslides.moveEncoderTo(robot.hslides.PRESET3, 0.8f);
                         vslideGoBottom = true;
-                        setPathState(15);
+                        setPathState(16);
                     }
-                }
-                break;
-            case 15:
-                if(follower.getCurrentTValue() >0.2){
-                    setPathState(16);
                 }
                 break;
             case 16:
                 if(!follower.isBusy()) {
                     robot.latch.setOut();
                     robot.intakeTilt.setOut();
-                    //robot.intakeTilt.setFlat();
                     if(floorRep==3) {
                         follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(180));
-                        robot.hslides.moveEncoderTo(robot.hslides.PRESET1, 0.8f);
                     }
                     else if(floorRep==2) {
                         follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(210));
-                        robot.hslides.moveEncoderTo(robot.hslides.PRESET2, 0.8f);
                     }
                     else if(floorRep==1) {
                         follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(225));
-                        robot.hslides.moveEncoderTo(robot.hslides.PRESET3, 0.8f);
                     }
                     robot.intake.in();
-                    waitFor(300);
                     setPathState(161);
                 }
                 break;
@@ -204,6 +189,10 @@ public class autoRedBucket extends OpMode{
                 }
                 break;
             case 17:
+                waitFor(200);
+                robot.claw.setClose();
+                waitFor(250);
+                robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1f);
                 if(hlimitswitch.getState()) {
                     follower.followPath(floorCycle);
                     if(floorRep==3) {
@@ -216,17 +205,13 @@ public class autoRedBucket extends OpMode{
                         floorCycle.setLinearHeadingInterpolation(Math.toRadians(225), Math.PI);
                     }
                     waitFor(200);
-                    robot.claw.setClose();
-                    waitFor(250);
-                    robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1f);
-                    waitFor(200);
                     robot.depoWrist.setOut();
                     pathTimer.resetTimer();
                     setPathState(171);
                 }
                 break;
             case 171:
-                if(pathTimer.getElapsedTime()>1000){
+                if(pathTimer.getElapsedTime()>900){
                     robot.clawBigTilt.setBucket();
                     robot.depoHslide.setInit();
                     robot.clawSmallTilt.setRight();
@@ -249,9 +234,9 @@ public class autoRedBucket extends OpMode{
                 }
                 break;
             case 18:
-                waitFor(450);
+                waitFor(350);
                 robot.depoWrist.setIn();
-                waitFor(550);
+                waitFor(450);
                 robot.claw.setOpen();
                 robot.clawBigTilt.setTransfer();
                 robot.clawSmallTilt.setTransfer();
@@ -314,7 +299,6 @@ public class autoRedBucket extends OpMode{
             robot.vSlides.vSlidesL.setPower(-1);
             RobotLog.ii(TAG_SL, "Going down");
         } else if (!vlimitswitch.getState() && vslideGoBottom) {
-            //robot.hslides.forceStop();
             robot.vSlides.vSlidesR.setPower(0);
             robot.vSlides.vSlidesL.setPower(0);
             robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
