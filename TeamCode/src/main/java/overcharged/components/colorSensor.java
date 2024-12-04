@@ -26,14 +26,16 @@ public class colorSensor {
     }
     public Color getColor() {
         float hue = getHSV()[0];
-        if (170 <= hue && hue <= 300) {
-            color = Color.BLUE;
-        }
-        else if (0 <= hue && hue <= 30) {
-            color = Color.RED;
-        }
-        else if (51 <= hue && hue <= 120) {
-            color = Color.YELLOW;
+        float saturation = getHSV()[0];
+        float value = getHSV()[2];
+        if(value > 0.35f) {
+            if (175 <= hue && hue <= 300) {
+                color = Color.BLUE;
+            } else if (0 <= hue && hue <= 30) {
+                color = Color.RED;
+            } else if (51 <= hue && hue <= 120) {
+                color = Color.YELLOW;
+            }
         }
 
         else{
