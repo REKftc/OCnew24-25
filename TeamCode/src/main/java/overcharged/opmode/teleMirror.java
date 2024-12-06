@@ -60,8 +60,8 @@ import overcharged.pedroPathing.pathGeneration.Vector;
  */
 
 @Config
-@TeleOp(name="RED sexy smooth teleop", group="Teleop")
-public class teleop4 extends OpMode {
+@TeleOp(name="BLUE sexy smooth teleop", group="Teleop")
+public class teleMirror extends OpMode {
     RobotMecanum robot;
     double slowPower = 1;
     long startTime;
@@ -98,10 +98,10 @@ public class teleop4 extends OpMode {
     boolean highTransfer = false;
 
     boolean redSpec = false;
-    boolean red = true;
+    boolean red = false;
     boolean yellow = false;
     boolean blueSpec = false;
-    boolean blue = false;
+    boolean blue = true;
 
     boolean bucketSeq = false;
     private DigitalChannel hlimitswitch;
@@ -273,28 +273,27 @@ public class teleop4 extends OpMode {
         if (gamepad1.touchpad && Button.CYCLE_MODE.canPress(timestamp)) {
             modeCount += 1;
             if (modeCount % 2 == 0){
-                redSpec = true;
-                red = false;
-                gamepad1.rumble(50,0,500);
+                blueSpec = true;
+                blue = false;
+                gamepad1.rumble(50,0,300);
             }
             else if (modeCount % 3 == 0){
                 yellow = true;
-                redSpec = false;
-                gamepad1.rumble(50,20,500);
+                blueSpec = false;
+                gamepad1.rumble(50,50,300);
                 modeCount = 0;
             }
             else{
-                red = true;
+                blue = true;
                 yellow = false;
-                gamepad1.rumble(50,50,500);
+                gamepad1.rumble(0,50,300);
             }
         }
-        if(redSpec){
-            gamepad1.setLedColor(255,0,0,250);
-
+        if(blueSpec){
+            gamepad1.setLedColor(0,0,255,250);
         }
-        else if (red){
-            gamepad1.setLedColor(255,165,0,250);
+        else if (blue){
+            gamepad1.setLedColor(195,0,255,250);
         }
         else if (yellow){
             gamepad1.setLedColor(255,255,0,250);
