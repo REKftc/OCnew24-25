@@ -189,9 +189,12 @@ public class teleop4 extends OpMode {
         } else if (slideHeight == SlideHeight.WALL){
             slowPower = 1;
         } else if (slideHeight == SlideHeight.MID){
-            slowPower = 1;
-        } else{
+            slowPower = 1.15;
+        } else if(hSlideGoBottom){
             slowPower = 1.25;
+        }
+        else{
+            slowPower = 1.35;
         }
 
 
@@ -246,7 +249,7 @@ public class teleop4 extends OpMode {
         if (!hlimitswitch.getState() && hSlideGoBottom) {
             robot.latch.setInit();
             robot.hslides.hslides.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-            robot.hslides.hslides.setPower(-1);
+            robot.hslides.hslides.setPower(-1.2f);
             RobotLog.ii(TAG_SL, "Going down");
         } else if (hlimitswitch.getState() && hSlideGoBottom) {
             robot.latch.setInit();
@@ -260,6 +263,9 @@ public class teleop4 extends OpMode {
             cDelay = true;
             hSlideGoBottom = false;
             sense = false;
+            if(robot.sensorF.getColor() == colorSensor.Color.NONE){
+                gamepad1.rumble(600);
+            }
             RobotLog.ii(TAG_SL, "Force stopped");
             gamepad2.rumble(400);
         }
@@ -275,26 +281,28 @@ public class teleop4 extends OpMode {
             if (modeCount % 2 == 0){
                 redSpec = true;
                 red = false;
+                mode = ModeNow.RED_ONLY;
                 gamepad1.rumble(50,0,500);
             }
             else if (modeCount % 3 == 0){
                 yellow = true;
                 redSpec = false;
+                mode = ModeNow.YELLOW_ONLY;
                 gamepad1.rumble(50,20,500);
                 modeCount = 0;
             }
             else{
                 red = true;
                 yellow = false;
+                mode = ModeNow.RED_YELLOW;
                 gamepad1.rumble(50,50,500);
             }
         }
         if(redSpec){
             gamepad1.setLedColor(255,0,0,250);
-
         }
         else if (red){
-            gamepad1.setLedColor(255,165,0,250);
+            gamepad1.setLedColor(255,105,180,250);
         }
         else if (yellow){
             gamepad1.setLedColor(255,255,0,250);

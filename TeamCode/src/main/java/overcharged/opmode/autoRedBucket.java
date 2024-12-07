@@ -69,7 +69,7 @@ public class autoRedBucket extends OpMode{
         initBucket = new Pose(126,30,3*Math.PI/4);
         beforeBucket = new Pose(120,24,3*Math.PI/4);
         ready2Score = new Pose(124,19,3*Math.PI/4);
-        wallScore = new Pose(122,17.5,Math.PI);
+        wallScore = new Pose(122.5,17,Math.PI);
     }
 
 
@@ -81,7 +81,7 @@ public class autoRedBucket extends OpMode{
                 .setLinearHeadingInterpolation(startPose.getHeading(), initBucket.getHeading())
                 .addPath(new BezierLine(new Point(initBucket), new Point(ready2Score)))
                 .setConstantHeadingInterpolation(ready2Score.getHeading())
-                .setPathEndTimeoutConstraint(3.0)
+                .setPathEndTimeoutConstraint(0)
                 .build();
 
 
@@ -105,7 +105,7 @@ public class autoRedBucket extends OpMode{
             //
             case 10: // scores initial specimen
                 pathTimer.resetTimer();
-                follower.followPath(preload, false);
+                follower.followPath(preload, true);
                 setPathState(12);
                 break;
 
@@ -143,7 +143,7 @@ public class autoRedBucket extends OpMode{
                     pathTimer.resetTimer();
                     if(floorRep == 3) {
                         follower.followPath(goSafe);
-                        goSafe.setLinearHeadingInterpolation(beforeBucket.getHeading(), Math.toRadians(180));
+                        goSafe.setLinearHeadingInterpolation(beforeBucket.getHeading(), Math.toRadians(185));
                         robot.hslides.moveEncoderTo(robot.hslides.PRESET1, 0.8f);
                         vslideGoBottom = true;
                         setPathState(16);
@@ -157,7 +157,7 @@ public class autoRedBucket extends OpMode{
                     }
                     else if(floorRep==1){
                         follower.followPath(goBack);
-                        goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(230));
+                        goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(225));
                         robot.hslides.moveEncoderTo(robot.hslides.PRESET3, 0.8f);
                         vslideGoBottom = true;
                         setPathState(16);
@@ -170,7 +170,7 @@ public class autoRedBucket extends OpMode{
                     robot.latch.setOut();
                     robot.intakeTilt.setOut();
                     if(floorRep==3) {
-                        follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(180));
+                        follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(185));
                     }
                     else if(floorRep==2) {
                         follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(210));
@@ -196,8 +196,13 @@ public class autoRedBucket extends OpMode{
                     robot.intakeTilt.setTransfer();
                     hSlideGoBottom = true;
                     floorRep-=1;
-                    setPathState(14);
+                    setPathState(1611);
                 }
+                break;
+
+            case 1611:
+
+                setPathState(14);
                 break;
 
             case 17:

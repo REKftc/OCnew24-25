@@ -102,6 +102,7 @@ public class teleMirror extends OpMode {
     boolean yellow = false;
     boolean blueSpec = false;
     boolean blue = true;
+    ModeNow mode = ModeNow.BLUE_YELLOW;
 
     boolean bucketSeq = false;
     private DigitalChannel hlimitswitch;
@@ -110,7 +111,6 @@ public class teleMirror extends OpMode {
     SlideLength slideLength = SlideLength.IN;
     SlideHeight slideHeight = SlideHeight.DOWN;
     ScoreType score = ScoreType.NONE;
-    ModeNow mode = ModeNow.RED_YELLOW;
     boolean latch = true;
 
     public enum IntakeMode {
@@ -189,9 +189,9 @@ public class teleMirror extends OpMode {
         } else if (slideHeight == SlideHeight.WALL){
             slowPower = 1;
         } else if (slideHeight == SlideHeight.MID){
-            slowPower = 1;
+            slowPower = 1.15;
         } else{
-            slowPower = 1.25;
+            slowPower = 1.35;
         }
 
 
@@ -260,6 +260,9 @@ public class teleMirror extends OpMode {
             cDelay = true;
             hSlideGoBottom = false;
             sense = false;
+            if(robot.sensorF.getColor() == colorSensor.Color.NONE){
+                gamepad1.rumble(600);
+            }
             RobotLog.ii(TAG_SL, "Force stopped");
             gamepad2.rumble(400);
         }
@@ -275,17 +278,20 @@ public class teleMirror extends OpMode {
             if (modeCount % 2 == 0){
                 blueSpec = true;
                 blue = false;
+                mode = ModeNow.BLUE_ONLY;
                 gamepad1.rumble(50,0,300);
             }
             else if (modeCount % 3 == 0){
                 yellow = true;
                 blueSpec = false;
+                mode = ModeNow.YELLOW_ONLY;
                 gamepad1.rumble(50,50,300);
                 modeCount = 0;
             }
             else{
                 blue = true;
                 yellow = false;
+                mode = ModeNow.BLUE_YELLOW;
                 gamepad1.rumble(0,50,300);
             }
         }

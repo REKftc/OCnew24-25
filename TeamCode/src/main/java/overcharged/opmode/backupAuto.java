@@ -35,6 +35,8 @@ public class backupAuto extends OpMode{
     boolean hSlideGoBottom = false;
     boolean scored = false;
 
+    long totalTime;
+
     int floorRep = 3;
 
     // Init
@@ -69,7 +71,7 @@ public class backupAuto extends OpMode{
         initBucket = new Pose(126,30,3*Math.PI/4);
         beforeBucket = new Pose(120,24,3*Math.PI/4);
         ready2Score = new Pose(125,19,3*Math.PI/4);
-        wallScore = new Pose(122,17.5,Math.PI);
+        wallScore = new Pose(123,16.2,Math.PI);
     }
 
 
@@ -114,17 +116,20 @@ public class backupAuto extends OpMode{
             // Auto Body
             //
             case 10: // scores initial specimen
+                totalTime = pathTimer.getElapsedTime();
                 pathTimer.resetTimer();
                 follower.followPath(preload, false);
                 setPathState(12);
                 break;
             case 12:
+                robot.intakeTilt.setFlat();
                 if(pathTimer.getElapsedTime()>2000){
                     pathTimer.resetTimer();
                     robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1f);
+                    robot.clawSmallTilt.setOut();
                     waitFor(600);
                     robot.depoWrist.setOut();
-                    waitFor(600);
+                    waitFor(500);
                     setPathState(13);
                 }
                 break;
@@ -132,7 +137,6 @@ public class backupAuto extends OpMode{
                 follower.holdPoint(new BezierPoint(new Point(135,9.5,Point.CARTESIAN)),3*Math.PI/4);
                 robot.clawBigTilt.setBucket();
                 robot.depoHslide.setInit();
-                robot.clawSmallTilt.setOut();
                 waitFor(900);
                 robot.claw.setBig();
                 scored = true;
@@ -147,47 +151,42 @@ public class backupAuto extends OpMode{
                 robot.clawSmallTilt.setTransfer();
                 if(!follower.isBusy()&&scored) {
                     scored = false;
+                    pathTimer.resetTimer();
                     if(floorRep == 3) {
                         follower.followPath(goSafe);
-                        goSafe.setLinearHeadingInterpolation(beforeBucket.getHeading(), Math.toRadians(180));
+                        goSafe.setLinearHeadingInterpolation(beforeBucket.getHeading(), Math.toRadians(190));
                         vslideGoBottom = true;
-                        setPathState(15);
+                        setPathState(16);
                     }
                     else if(floorRep==2){
                         follower.followPath(goBack);
-                        goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(200));
+                        goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(210));
                         vslideGoBottom = true;
-                        setPathState(15);
+                        setPathState(16);
                     }
                     else if(floorRep==1){
                         follower.followPath(goBack);
                         goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(230));
                         vslideGoBottom = true;
-                        setPathState(15);
+                        setPathState(16);
                     }
-                }
-                break;
-            case 15:
-                if(follower.getCurrentTValue() >0.2){
-                    setPathState(16);
                 }
                 break;
             case 16:
                 if(!follower.isBusy()) {
                     robot.latch.setOut();
                     robot.intakeTilt.setOut();
-                    //robot.intakeTilt.setFlat();
                     if(floorRep==3) {
-                        follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(180));
-                        robot.hslides.moveEncoderTo(robot.hslides.PRESET1, 0.8f);
+                        follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(190));
+                        robot.hslides.moveEncoderTo(robot.hslides.PRESET1, 0.6f);
                     }
                     else if(floorRep==2) {
                         follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(210));
-                        robot.hslides.moveEncoderTo(robot.hslides.PRESET2, 0.8f);
+                        robot.hslides.moveEncoderTo(robot.hslides.PRESET2, 0.9f);
                     }
                     else if(floorRep==1) {
                         follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(225));
-                        robot.hslides.moveEncoderTo(robot.hslides.PRESET3, 0.8f);
+                        robot.hslides.moveEncoderTo(robot.hslides.PRESET3, 1f);
                     }
                     robot.intake.in();
                     waitFor(300);
@@ -196,18 +195,28 @@ public class backupAuto extends OpMode{
                 break;
             case 161:
                 if(robot.sensorF.getColor() == colorSensor.Color.YELLOW){
-                    robot.intakeTilt.setTransfer();
+                    robot.intakeTilt.setHigh();
                     hSlideGoBottom = true;
                     waitFor(250);
-                    robot.intake.off();
+                    robot.intake.out();
                     setPathState(17);
+                }
+                else if (pathTimer.getElapsedTime()>2500){
+                    robot.intake.off();
+                    robot.intakeTilt.setTransfer();
+                    hSlideGoBottom = true;
+                    floorRep-=1;
+                    scored = true;
+                    setPathState(14);
                 }
                 break;
             case 17:
+                waitFor(300);
+                robot.intake.off();
                 if(hlimitswitch.getState()) {
                     follower.followPath(floorCycle);
                     if(floorRep==3) {
-                        floorCycle.setLinearHeadingInterpolation(Math.toRadians(180), Math.PI);
+                        floorCycle.setLinearHeadingInterpolation(Math.toRadians(190), Math.PI);
                     }
                     else if(floorRep==2) {
                         floorCycle.setLinearHeadingInterpolation(Math.toRadians(210), Math.PI);
@@ -254,8 +263,8 @@ public class backupAuto extends OpMode{
                 waitFor(550);
                 robot.claw.setOpen();
                 robot.clawBigTilt.setTransfer();
-                robot.clawSmallTilt.setTransfer();
                 vslideGoBottom = true;
+                robot.clawSmallTilt.setTransfer();
                 setPathState(100);
                 break;
 
@@ -314,7 +323,6 @@ public class backupAuto extends OpMode{
             robot.vSlides.vSlidesL.setPower(-1);
             RobotLog.ii(TAG_SL, "Going down");
         } else if (!vlimitswitch.getState() && vslideGoBottom) {
-            //robot.hslides.forceStop();
             robot.vSlides.vSlidesR.setPower(0);
             robot.vSlides.vSlidesL.setPower(0);
             robot.vSlides.vSlidesL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
