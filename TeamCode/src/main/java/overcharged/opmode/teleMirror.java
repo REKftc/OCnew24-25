@@ -191,7 +191,7 @@ public class teleMirror extends OpMode {
         } else if (slideHeight == SlideHeight.MID){
             slowPower = 1.15;
         } else{
-            slowPower = 1.35;
+            slowPower = 1.25;
         }
 
 

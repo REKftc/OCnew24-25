@@ -191,10 +191,10 @@ public class teleop4 extends OpMode {
         } else if (slideHeight == SlideHeight.MID){
             slowPower = 1.15;
         } else if(hSlideGoBottom){
-            slowPower = 1.25;
+            slowPower = 1.15;
         }
         else{
-            slowPower = 1.35;
+            slowPower = 1.25;
         }
 
 

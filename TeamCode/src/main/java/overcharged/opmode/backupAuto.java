@@ -68,23 +68,15 @@ public class backupAuto extends OpMode{
     //TODO: Starting from here are the poses for the paths
     public void firstBucket(){
         //beforeBucket = new Pose(-10,-10,Math.PI/4);
-        initBucket = new Pose(126,30,3*Math.PI/4);
-        beforeBucket = new Pose(120,24,3*Math.PI/4);
-        ready2Score = new Pose(125,19,3*Math.PI/4);
-        wallScore = new Pose(123,16.2,Math.PI);
+        initBucket = new Pose(126,30,Math.toRadians(130));
+        beforeBucket = new Pose(120,24,Math.toRadians(130));
+        ready2Score = new Pose(125,19,Math.toRadians(130));
+        wallScore = new Pose(122,15.6,Math.PI);
     }
 
 
     //TODO: here are where the paths are defined
     public void buildPaths() {
-        /*
-        firstScore = new Path(new BezierLine(new Point(startPose),new Point(beforeBucket)));
-        firstScore.setConstantHeadingInterpolation(Math.PI/2);
-
-        inchBucket = new Path(new BezierLine(new Point(beforeBucket), new Point(ready2Score)));
-        inchBucket.setConstantHeadingInterpolation(3*Math.PI/4);
-
-         */
 
         preload = follower.pathBuilder()
                 .addPath(new BezierLine(new Point(startPose),new Point(initBucket)))
@@ -134,7 +126,7 @@ public class backupAuto extends OpMode{
                 }
                 break;
             case 13:
-                follower.holdPoint(new BezierPoint(new Point(135,9.5,Point.CARTESIAN)),3*Math.PI/4);
+                follower.holdPoint(new BezierPoint(new Point(134.6,8.8,Point.CARTESIAN)),Math.toRadians(130));
                 robot.clawBigTilt.setBucket();
                 robot.depoHslide.setInit();
                 waitFor(900);
@@ -154,19 +146,19 @@ public class backupAuto extends OpMode{
                     pathTimer.resetTimer();
                     if(floorRep == 3) {
                         follower.followPath(goSafe);
-                        goSafe.setLinearHeadingInterpolation(beforeBucket.getHeading(), Math.toRadians(190));
+                        goSafe.setLinearHeadingInterpolation(beforeBucket.getHeading(), Math.toRadians(185));
                         vslideGoBottom = true;
                         setPathState(16);
                     }
                     else if(floorRep==2){
                         follower.followPath(goBack);
-                        goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(210));
+                        goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(205));
                         vslideGoBottom = true;
                         setPathState(16);
                     }
                     else if(floorRep==1){
                         follower.followPath(goBack);
-                        goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(230));
+                        goBack.setLinearHeadingInterpolation(wallScore.getHeading(), Math.toRadians(225));
                         vslideGoBottom = true;
                         setPathState(16);
                     }
@@ -177,12 +169,12 @@ public class backupAuto extends OpMode{
                     robot.latch.setOut();
                     robot.intakeTilt.setOut();
                     if(floorRep==3) {
-                        follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(190));
-                        robot.hslides.moveEncoderTo(robot.hslides.PRESET1, 0.6f);
+                        follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(185));
+                        robot.hslides.moveEncoderTo(robot.hslides.PRESET1, 0.7f);
                     }
                     else if(floorRep==2) {
-                        follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(210));
-                        robot.hslides.moveEncoderTo(robot.hslides.PRESET2, 0.9f);
+                        follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(205));
+                        robot.hslides.moveEncoderTo(robot.hslides.PRESET2, 0.80f);
                     }
                     else if(floorRep==1) {
                         follower.holdPoint(new BezierPoint(new Point(beforeBucket)), Math.toRadians(225));
@@ -197,7 +189,8 @@ public class backupAuto extends OpMode{
                 if(robot.sensorF.getColor() == colorSensor.Color.YELLOW){
                     robot.intakeTilt.setHigh();
                     hSlideGoBottom = true;
-                    waitFor(250);
+                    robot.intake.in();
+                    waitFor(450);
                     robot.intake.out();
                     setPathState(17);
                 }
@@ -214,6 +207,7 @@ public class backupAuto extends OpMode{
                 waitFor(300);
                 robot.intake.off();
                 if(hlimitswitch.getState()) {
+                    robot.intakeTilt.setTransfer();
                     follower.followPath(floorCycle);
                     if(floorRep==3) {
                         floorCycle.setLinearHeadingInterpolation(Math.toRadians(190), Math.PI);
@@ -229,6 +223,7 @@ public class backupAuto extends OpMode{
                     waitFor(250);
                     robot.vSlides.moveEncoderTo(robot.vSlides.high1, 1f);
                     waitFor(200);
+                    robot.intakeTilt.setFlat();
                     robot.depoWrist.setOut();
                     pathTimer.resetTimer();
                     setPathState(171);
@@ -239,6 +234,7 @@ public class backupAuto extends OpMode{
                     robot.clawBigTilt.setBucket();
                     robot.depoHslide.setInit();
                     robot.clawSmallTilt.setRight();
+                    robot.intakeTilt.setTransfer();
                     setPathState(172);
                 }
                 break;
@@ -297,6 +293,7 @@ public class backupAuto extends OpMode{
         autoPath();
         telemetry.addLine("TValue: "+follower.getCurrentTValue());
         telemetry.addLine("Path: " + pathState);
+        telemetry.addLine("color: "+robot.sensorF.getColor());
         telemetry.addLine("vLimit" + vlimitswitch.getState());
         telemetry.addLine("hLimit" + hlimitswitch.getState());
         telemetry.addLine("Rep Count"+ floorRep);
